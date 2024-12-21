@@ -1,5 +1,5 @@
 # ProjetoEventos
--- Criação Bando de Dados
+## Criação Bando de Dados
 
 -- Criação do Banco de Dados
 CREATE DATABASE GerenciadorEventos;
