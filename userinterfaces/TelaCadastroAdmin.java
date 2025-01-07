@@ -5,9 +5,7 @@ import java.awt.*;
 
 public class TelaCadastroAdmin extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-
-	public TelaCadastroAdmin() {
+    public TelaCadastroAdmin() {
         // Configurações da Janela
         setTitle("Cadastro de Administradores");
         setSize(600, 400);
@@ -117,5 +115,10 @@ public class TelaCadastroAdmin extends JFrame {
         TelaLogin telaLogin = new TelaLogin();
         telaLogin.setVisible(true);
         dispose();
+    }
+
+    public static void main(String[] args) {
+        TelaCadastroAdmin frame = new TelaCadastroAdmin();
+        frame.setVisible(true);
     }
 }
