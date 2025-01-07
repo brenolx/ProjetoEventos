@@ -1,17 +1,7 @@
 package userinterfaces;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 public class TelaCadastroAdmin extends JFrame {
 
@@ -28,6 +18,9 @@ public class TelaCadastroAdmin extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // JLabel com fonte maior para "Cadastre-se"
+        JLabel lblTitulo = new JLabel("<html><span style='font-size:21px'>Cadastre-se:</span></html>", SwingConstants.CENTER);
+
         // Componentes
         JLabel lblNomeCompleto = new JLabel("Nome Completo:", SwingConstants.CENTER);
         JTextField txtNomeCompleto = new JTextField();
@@ -41,9 +34,6 @@ public class TelaCadastroAdmin extends JFrame {
         JPasswordField txtSenha = new JPasswordField();
         txtSenha.setPreferredSize(new Dimension(200, 20));
 
-        JLabel lblTipoUsuario = new JLabel("Tipo de Usuário:", SwingConstants.CENTER);
-        JComboBox<String> cbTipoUsuario = new JComboBox<>(new String[]{"Administrador", "Participante"});
-
         JLabel lblCargo = new JLabel("Cargo:", SwingConstants.CENTER);
         JTextField txtCargo = new JTextField();
         txtCargo.setPreferredSize(new Dimension(200, 20));
@@ -52,11 +42,18 @@ public class TelaCadastroAdmin extends JFrame {
         JTextField txtDataContratacao = new JTextField();
         txtDataContratacao.setPreferredSize(new Dimension(200, 20));
 
-        JButton btnSalvar = new JButton("Cadastrar");
+        JButton btnSalvar = new JButton("Salvar");
 
         // Adicionando os Componentes ao JFrame em duas colunas
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(lblTitulo, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         add(lblNomeCompleto, gbc);
         gbc.gridx = 1;
@@ -75,13 +72,6 @@ public class TelaCadastroAdmin extends JFrame {
         add(lblSenha, gbc);
         gbc.gridx = 1;
         add(txtSenha, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(lblTipoUsuario, gbc);
-        gbc.gridx = 1;
-        add(cbTipoUsuario, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -110,5 +100,7 @@ public class TelaCadastroAdmin extends JFrame {
         frame.setVisible(true);
     }
 }
+
+
 
 
