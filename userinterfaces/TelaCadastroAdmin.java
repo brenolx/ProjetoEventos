@@ -24,25 +24,28 @@ public class TelaCadastroAdmin extends JFrame {
         // Componentes
         JLabel lblNomeCompleto = new JLabel("Nome Completo:", SwingConstants.CENTER);
         JTextField txtNomeCompleto = new JTextField();
-        txtNomeCompleto.setPreferredSize(new Dimension(200, 20));
+        txtNomeCompleto.setPreferredSize(new Dimension(150, 20)); // Diminuído para 150
 
         JLabel lblEmail = new JLabel("E-mail:", SwingConstants.CENTER);
         JTextField txtEmail = new JTextField();
-        txtEmail.setPreferredSize(new Dimension(200, 20));
+        txtEmail.setPreferredSize(new Dimension(150, 20)); // Diminuído para 150
 
         JLabel lblSenha = new JLabel("Senha:", SwingConstants.CENTER);
         JPasswordField txtSenha = new JPasswordField();
-        txtSenha.setPreferredSize(new Dimension(200, 20));
+        txtSenha.setPreferredSize(new Dimension(150, 20)); // Diminuído para 150
 
         JLabel lblCargo = new JLabel("Cargo:", SwingConstants.CENTER);
         JTextField txtCargo = new JTextField();
-        txtCargo.setPreferredSize(new Dimension(200, 20));
+        txtCargo.setPreferredSize(new Dimension(150, 20)); // Diminuído para 150
 
         JLabel lblDataContratacao = new JLabel("Data da Contratação:", SwingConstants.CENTER);
         JTextField txtDataContratacao = new JTextField();
-        txtDataContratacao.setPreferredSize(new Dimension(200, 20));
+        txtDataContratacao.setPreferredSize(new Dimension(150, 25)); // Diminuído para 150
 
         JButton btnSalvar = new JButton("Salvar");
+        btnSalvar.setPreferredSize(new Dimension(200, 30)); // Largura reduzida e altura 30
+        JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.setPreferredSize(new Dimension(80, 30)); // 1/3 da largura do botão "Salvar", altura igual
 
         // Adicionando os Componentes ao JFrame em duas colunas
         gbc.gridx = 0;
@@ -87,12 +90,31 @@ public class TelaCadastroAdmin extends JFrame {
         gbc.gridx = 1;
         add(txtDataContratacao, gbc);
 
-        // Centralizando o botão
+        // Adicionando os botões "Voltar" e "Salvar"
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
+        add(btnVoltar, gbc);
+        gbc.gridx = 1;
         add(btnSalvar, gbc);
+
+        btnSalvar.addActionListener(e -> salvarDados());
+        btnVoltar.addActionListener(e -> voltarParaLogin());
+    }
+
+    // Método para salvar dados (exemplo)
+    private void salvarDados() {
+        // Lógica para salvar os dados
+        JOptionPane.showMessageDialog(this, "Dados salvos com sucesso!");
+    }
+
+    // Método para voltar à tela de login
+    private void voltarParaLogin() {
+        // Supondo que você tem uma classe TelaLogin
+        TelaLogin telaLogin = new TelaLogin();
+        telaLogin.setVisible(true);
+        dispose();
     }
 
     public static void main(String[] args) {
@@ -100,7 +122,3 @@ public class TelaCadastroAdmin extends JFrame {
         frame.setVisible(true);
     }
 }
-
-
-
-

@@ -1,8 +1,10 @@
 package userinterfaces;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,8 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
 
 import entities.Mensagem;
 import services.GerenciadorServidor;
@@ -37,37 +39,63 @@ public class TelaLogin extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(487, 349);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.ORANGE);
     }
 
     private void adicionarComponentes() {
         JPanel painelPrincipal = criarPainelPrincipal();
-        getContentPane().add(painelPrincipal, BorderLayout.CENTER);
+        getContentPane().add(painelPrincipal);
         setJMenuBar(criarMenuBar());
     }
 
     private JPanel criarPainelPrincipal() {
-        JPanel painelPrincipal = new JPanel(null);
-        painelPrincipal.setBackground(Color.BLACK);
+        JPanel painelPrincipal = new JPanel(new GridBagLayout());
+        painelPrincipal.setBackground(Color.WHITE);  // Define o fundo branco
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel titulo = criarTitulo("Login de Usuário", 143, 30, 190, 32);
-        painelPrincipal.add(titulo);
+        // JLabel com fonte maior para "Login"
+        JLabel lblTitulo = new JLabel("<html><span style='font-size:20px'>Login</span></html>", SwingConstants.CENTER);
 
-        JLabel emailLabel = criarLabel("Email:", 83, 99);
-        painelPrincipal.add(emailLabel);
+        // Componentes
+        JLabel emailLabel = new JLabel("Email:", SwingConstants.CENTER);
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(200, 20));
 
-        textField = criarCampoTexto(134, 96);
-        painelPrincipal.add(textField);
+        JLabel senhaLabel = new JLabel("Senha:", SwingConstants.CENTER);
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setPreferredSize(new Dimension(200, 20));
 
-        JLabel senhaLabel = criarLabel("Senha:", 83, 139);
-        painelPrincipal.add(senhaLabel);
-
-        passwordField = criarCampoSenha(134, 136);
-        painelPrincipal.add(passwordField);
-
-        JButton botaoLogin = criarBotao("Entrar", 83, 180);
+        JButton botaoLogin = new JButton("Entrar");
         botaoLogin.addActionListener(e -> executarLogin());
-        painelPrincipal.add(botaoLogin);
+
+        // Adicionando os Componentes ao JFrame
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        painelPrincipal.add(lblTitulo, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        painelPrincipal.add(emailLabel, gbc);
+        gbc.gridx = 1;
+        painelPrincipal.add(textField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        painelPrincipal.add(senhaLabel, gbc);
+        gbc.gridx = 1;
+        painelPrincipal.add(passwordField, gbc);
+
+        // Centralizando o botão
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        painelPrincipal.add(botaoLogin, gbc);
 
         return painelPrincipal;
     }
@@ -81,70 +109,11 @@ public class TelaLogin extends JFrame {
         cadastroMenu.add(cadastrarParticipanteItem);
 
         JMenuItem cadastrarAdminItem = new JMenuItem("Cadastrar Admin");
-        cadastrarAdminItem.addActionListener(e -> exibirMensagem("Cadastro de Admin iniciado!"));
+        cadastrarAdminItem.addActionListener(e -> abrirTelaCadastroAdmin()); // Atualizado para abrir a tela de cadastro de admin
         cadastroMenu.add(cadastrarAdminItem);
 
         menuBar.add(cadastroMenu);
         return menuBar;
-    }
-
-    private JLabel criarTitulo(String texto, int x, int y, int largura, int altura) {
-        JLabel titulo = new JLabel(texto);
-        titulo.setBounds(x, y, largura, altura);
-        titulo.setFont(new Font("Segoe UI", Font.BOLD,  24));
-        titulo.setForeground(Color.WHITE);
-        return titulo;
-    }
-
-    private JLabel criarLabel(String texto, int x, int y) {
-        JLabel label = new JLabel(texto);
-        label.setBounds(x, y, 54, 15);
-        label.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        label.setForeground(Color.ORANGE);
-        return label;
-    }
-
-    private JTextField criarCampoTexto(int x, int y) {
-        JTextField campoTexto = new JTextField(20);
-        campoTexto.setBounds(x, y, 262, 22);
-        estilizarCampoTexto(campoTexto);
-        return campoTexto;
-    }
-
-    private JPasswordField criarCampoSenha(int x, int y) {
-        JPasswordField campoSenha = new JPasswordField(20);
-        campoSenha.setBounds(x, y, 262, 22);
-        estilizarCampoTexto(campoSenha);
-        return campoSenha;
-    }
-
-    private JButton criarBotao(String texto, int x, int y) {
-        JButton botao = new JButton(texto);
-        botao.setBounds(x, y, 313, 23);
-        estilizarBotao(botao);
-        return botao;
-    }
-
-    private void estilizarCampoTexto(JTextField campoTexto) {
-        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        campoTexto.setBackground(Color.WHITE);
-        campoTexto.setForeground(Color.BLACK);
-        campoTexto.setBorder(new LineBorder(Color.GRAY));
-    }
-
-    private void estilizarCampoTexto(JPasswordField campoSenha) {
-        campoSenha.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        campoSenha.setBackground(Color.WHITE);
-        campoSenha.setForeground(Color.BLACK);
-        campoSenha.setBorder(new LineBorder(Color.GRAY));
-    }
-
-    private void estilizarBotao(JButton botao) {
-        botao.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        botao.setBackground(Color.ORANGE);
-        botao.setForeground(Color.BLACK);
-        botao.setFocusPainted(false);
-        botao.setBorder(new LineBorder(Color.ORANGE, 2));
     }
 
     private void executarLogin() {
@@ -166,6 +135,13 @@ public class TelaLogin extends JFrame {
     private void abrirTelaCadastroParticipante() {
         TelaCadastroParticipante telaCadastro = new TelaCadastroParticipante();
         telaCadastro.setVisible(true);
+        this.setVisible(false); // Oculta a tela de login
+    }
+
+    // Método para abrir a tela de cadastro de administrador
+    private void abrirTelaCadastroAdmin() {
+        TelaCadastroAdmin telaCadastroAdmin = new TelaCadastroAdmin();
+        telaCadastroAdmin.setVisible(true);
         this.setVisible(false); // Oculta a tela de login
     }
 
