@@ -1,15 +1,16 @@
 # ProjetoEventos
 
-## Criação Bando de Dados
 -- Criação do Banco de Dados
 CREATE DATABASE GerenciadorEventos;
+
+-- Seleciona o banco de dados recém-criado para uso
 USE GerenciadorEventos;
 
 -- Tabela usuarios
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome_completo VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL, -- O email continua sendo único, mas não é usado como chave estrangeira
     senha VARCHAR(255) NOT NULL,
     tipo_usuario ENUM('ADMINISTRADOR', 'PARTICIPANTE') NOT NULL,
     cargo VARCHAR(255),
@@ -31,7 +32,7 @@ CREATE TABLE eventos (
     categoria ENUM('PALESTRA', 'WORKSHOP', 'CONFERENCIA') NOT NULL,
     preco DECIMAL(10, 2) DEFAULT 0.00,
     organizador_id INT NOT NULL,
-    FOREIGN KEY (organizador_id) REFERENCES usuarios(id)
+    FOREIGN KEY (organizador_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
 -- Tabela inscricoes
@@ -42,8 +43,8 @@ CREATE TABLE inscricoes (
     data_inscricao DATETIME DEFAULT CURRENT_TIMESTAMP,
     status_inscricao ENUM('ATIVA', 'CANCELADA', 'PENDENTE') DEFAULT 'ATIVA',
     presenca_confirmada BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (participante_id) REFERENCES usuarios(id),
-    FOREIGN KEY (evento_id) REFERENCES eventos(id),
+    FOREIGN KEY (participante_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE,
     UNIQUE (participante_id, evento_id)
 );
 
@@ -54,5 +55,6 @@ CREATE TABLE relatorios (
     usuario_id INT NOT NULL,
     data_geracao DATETIME DEFAULT CURRENT_TIMESTAMP,
     arquivo_path VARCHAR(255),
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
