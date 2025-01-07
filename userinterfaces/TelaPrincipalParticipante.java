@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -88,11 +90,11 @@ public class TelaPrincipalParticipante extends JFrame {
             }
         });
         
-//     // Adicionando ação ao botão "Inscrições" 
-//        btnInscricoes.addActionListener(new ActionListener() { 
-//        	@Override public void actionPerformed(ActionEvent e) { 
-//        		new TelaInscricoesParticipante().setVisible(true); } 
-//        	});
+     // Adicionando ação ao botão "Inscrições" 
+        btnInscricoes.addActionListener(new ActionListener() { 
+        	@Override public void actionPerformed(ActionEvent e) { 
+        		new TelaInscricoesParticipante().setVisible(true); } 
+        	});
     }
 
     public static void main(String[] args) {
@@ -101,3 +103,14 @@ public class TelaPrincipalParticipante extends JFrame {
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
