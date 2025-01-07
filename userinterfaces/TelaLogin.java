@@ -1,18 +1,33 @@
 package userinterfaces;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+
 import entities.Mensagem;
-import entities.Servidor;
+import services.GerenciadorServidor;
 
 public class TelaLogin extends JFrame {
-
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JPasswordField passwordField;
+    private GerenciadorServidor gerenciadorServidor; // Instância do gerenciador
 
     public TelaLogin() {
+        gerenciadorServidor = new GerenciadorServidor(); // Inicializa o gerenciador
         configurarJanela();
         adicionarComponentes();
     }
@@ -62,7 +77,7 @@ public class TelaLogin extends JFrame {
         JMenu cadastroMenu = new JMenu("Cadastro");
 
         JMenuItem cadastrarParticipanteItem = new JMenuItem("Cadastrar Participante");
-        cadastrarParticipanteItem.addActionListener(e -> exibirMensagem("Cadastro de Participante iniciado!"));
+        cadastrarParticipanteItem.addActionListener(e -> abrirTelaCadastroParticipante()); // Chama o método para abrir a tela de cadastro
         cadastroMenu.add(cadastrarParticipanteItem);
 
         JMenuItem cadastrarAdminItem = new JMenuItem("Cadastrar Admin");
@@ -76,7 +91,7 @@ public class TelaLogin extends JFrame {
     private JLabel criarTitulo(String texto, int x, int y, int largura, int altura) {
         JLabel titulo = new JLabel(texto);
         titulo.setBounds(x, y, largura, altura);
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titulo.setFont(new Font("Segoe UI", Font.BOLD,  24));
         titulo.setForeground(Color.WHITE);
         return titulo;
     }
@@ -141,12 +156,17 @@ public class TelaLogin extends JFrame {
     }
 
     private void enviarMensagem(Mensagem mensagem) {
-        Servidor servidor = new Servidor(mensagem);
-        servidor.start();
+        gerenciadorServidor.enviarMensagem(mensagem); 
     }
 
     private void exibirMensagem(String mensagem) {
         JOptionPane.showMessageDialog(this, mensagem);
+    }
+
+    private void abrirTelaCadastroParticipante() {
+        TelaCadastroParticipante telaCadastro = new TelaCadastroParticipante();
+        telaCadastro.setVisible(true);
+        this.setVisible(false); // Oculta a tela de login
     }
 
     public static void main(String[] args) {

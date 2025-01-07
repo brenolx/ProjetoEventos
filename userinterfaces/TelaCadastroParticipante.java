@@ -5,163 +5,196 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.JOptionPane;
-import java.awt.Dimension;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+
+import services.CadastroParticipanteService;
+
+// Tela de Cadastro de Participante.
 
 public class TelaCadastroParticipante extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    // Campos de entrada
+    private JTextField nomeField;
+    private JTextField emailField;
+    private JPasswordField senhaField;
+    private JTextField dataNascimentoField;
+    private JTextField cpfField;
+
+    // Construtor
     public TelaCadastroParticipante() {
-        setTitle("Cadastro de Usuário");
+        setTitle("Cadastro de Participante");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.BLACK); // Fundo preto
 
-        JPanel cadastroPanel = criarAbaCadastro();
-        getContentPane().add(cadastroPanel);
+        // Criando o painel com GridBagLayout
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBackground(Color.BLACK);
+        getContentPane().add(panel);
+
+        // Adicionando os componentes ao painel
+        adicionarComponentes(panel);
     }
 
-    private JPanel criarAbaCadastro() {
-        JPanel cadastroPanel = new JPanel(new GridBagLayout());
-        cadastroPanel.setBackground(Color.BLACK); // Fundo preto
+    // Adiciona os componentes à tela
+    private void adicionarComponentes(JPanel panel) {
+        // Título
+        JLabel titulo = criarLabel("Cadastro de Participante", new Font("Segoe UI", Font.BOLD, 24), Color.WHITE);
+        GridBagConstraints gbcTitulo = criarGridBagConstraints(0, 0, 2, GridBagConstraints.CENTER);
+        panel.add(titulo, gbcTitulo);
 
-        // Configurações do título
-        GridBagConstraints gbcTitulo = new GridBagConstraints();
-        gbcTitulo.insets = new Insets(10, 10, 10, 10);
-        gbcTitulo.gridx = 0;
-        gbcTitulo.gridy = 0;
-        gbcTitulo.gridwidth = 2;
-        gbcTitulo.anchor = GridBagConstraints.CENTER;
-
-        JLabel titulo = new JLabel("Cadastro de Participante");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));  // Alterando a fonte para "Segoe UI"
-        titulo.setForeground(Color.WHITE);
-        cadastroPanel.add(titulo, gbcTitulo);
-
-        // Campo de nome
-        GridBagConstraints gbcNome = new GridBagConstraints();
-        gbcNome.insets = new Insets(10, 10, 10, 10);
-        gbcNome.gridx = 0;
-        gbcNome.gridy = 1;
-        gbcNome.anchor = GridBagConstraints.LINE_START;
-
-        JLabel nomeLabel = new JLabel("Nome:");
-        nomeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        nomeLabel.setForeground(Color.ORANGE);
-        cadastroPanel.add(nomeLabel, gbcNome);
-
-        GridBagConstraints gbcNomeField = new GridBagConstraints();
-        gbcNomeField.insets = new Insets(10, 10, 10, 10);
-        gbcNomeField.gridx = 1;
-        gbcNomeField.gridy = 1;
-        gbcNomeField.fill = GridBagConstraints.HORIZONTAL;
-
-        JTextField nomeField = new JTextField(20);
-        estilizarCampoTexto(nomeField);
-        cadastroPanel.add(nomeField, gbcNomeField);
-
-        // Campo de email
-        GridBagConstraints gbcEmail = new GridBagConstraints();
-        gbcEmail.insets = new Insets(10, 10, 10, 10);
-        gbcEmail.gridx = 0;
-        gbcEmail.gridy = 2;
-        gbcEmail.anchor = GridBagConstraints.LINE_START;
-
-        JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        emailLabel.setForeground(Color.ORANGE);
-        cadastroPanel.add(emailLabel, gbcEmail);
-
-        GridBagConstraints gbcEmailField = new GridBagConstraints();
-        gbcEmailField.insets = new Insets(10, 10, 10, 10);
-        gbcEmailField.gridx = 1;
-        gbcEmailField.gridy = 2;
-        gbcEmailField.fill = GridBagConstraints.HORIZONTAL;
-
-        JTextField emailField = new JTextField(20);
-        estilizarCampoTexto(emailField);
-        cadastroPanel.add(emailField, gbcEmailField);
-
-        // Campo de senha
-        GridBagConstraints gbcSenha = new GridBagConstraints();
-        gbcSenha.insets = new Insets(10, 10, 10, 10);
-        gbcSenha.gridx = 0;
-        gbcSenha.gridy = 3;
-        gbcSenha.anchor = GridBagConstraints.LINE_START;
-
-        JLabel senhaLabel = new JLabel("Senha:");
-        senhaLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        senhaLabel.setForeground(Color.ORANGE);
-        cadastroPanel.add(senhaLabel, gbcSenha);
-
-        GridBagConstraints gbcSenhaField = new GridBagConstraints();
-        gbcSenhaField.insets = new Insets(10, 10, 10, 10);
-        gbcSenhaField.gridx = 1;
-        gbcSenhaField.gridy = 3;
-        gbcSenhaField.fill = GridBagConstraints.HORIZONTAL;
-
-        JPasswordField senhaField = new JPasswordField(20);
-        estilizarCampoTexto(senhaField);
-        cadastroPanel.add(senhaField, gbcSenhaField);
+        // Campos de entrada
+        nomeField = criarCampoTexto("Nome:", 1, panel);
+        emailField = criarCampoTexto("Email:", 2, panel);
+        senhaField = criarCampoSenha("Senha:", 3, panel);
+        dataNascimentoField = criarCampoTexto("Data de Nascimento:", 4, panel);
+        configurarPlaceholderData();
+        cpfField = criarCampoTexto("CPF:", 5, panel);
 
         // Botão de cadastro
-        GridBagConstraints gbcCadastrarButton = new GridBagConstraints();
-        gbcCadastrarButton.insets = new Insets( 10, 10, 10, 10);
-        gbcCadastrarButton.gridx = 0;
-        gbcCadastrarButton.gridy = 4;
-        gbcCadastrarButton.gridwidth = 2;
-        gbcCadastrarButton.anchor = GridBagConstraints.CENTER;
-
         JButton cadastrarButton = new JButton("Cadastrar");
         estilizarBotao(cadastrarButton);
-        cadastrarButton.addActionListener(e -> cadastrarUsuario(nomeField.getText(), emailField.getText(), new String(senhaField.getPassword())));
-        cadastroPanel.add(cadastrarButton, gbcCadastrarButton);
+        GridBagConstraints gbcButton = criarGridBagConstraints(0, 6, 2, GridBagConstraints.CENTER);
+        panel.add(cadastrarButton, gbcButton);
 
-        return cadastroPanel;
+        cadastrarButton.addActionListener(e -> processarCadastro());
     }
 
+    // Configura o placeholder do campo de data
+    private void configurarPlaceholderData() {
+        dataNascimentoField.setText("yyyy-MM-dd");
+        dataNascimentoField.setForeground(Color.GRAY);
+        dataNascimentoField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (dataNascimentoField.getText().equals("yyyy-MM-dd")) {
+                    dataNascimentoField.setText("");
+                    dataNascimentoField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (dataNascimentoField.getText().isEmpty()) {
+                    dataNascimentoField.setText("yyyy-MM-dd");
+                    dataNascimentoField.setForeground(Color.GRAY);
+                }
+            }
+        });
+    }
+
+    // Cria um JLabel configurado
+    private JLabel criarLabel(String texto, Font fonte, Color cor) {
+        JLabel label = new JLabel(texto);
+        label.setFont(fonte);
+        label.setForeground(cor);
+        return label;
+    }
+
+    // Cria um campo de texto com label
+    private JTextField criarCampoTexto(String labelTexto, int gridy, JPanel panel) {
+        JLabel label = criarLabel(labelTexto, new Font("Tahoma", Font.PLAIN, 12), Color.ORANGE);
+        GridBagConstraints gbcLabel = criarGridBagConstraints(0, gridy, 1, GridBagConstraints.LINE_START);
+        panel.add(label, gbcLabel);
+
+        JTextField campoTexto = new JTextField(20);
+        estilizarCampoTexto(campoTexto);
+        GridBagConstraints gbcCampoTexto = criarGridBagConstraints(1, gridy, 1, GridBagConstraints.LINE_START);
+        panel.add(campoTexto, gbcCampoTexto);
+
+        return campoTexto;
+    }
+
+    // Cria um campo de senha com label
+    private JPasswordField criarCampoSenha(String labelTexto, int gridy, JPanel panel) {
+        JLabel label = criarLabel(labelTexto, new Font("Tahoma", Font.PLAIN, 12), Color.ORANGE);
+        GridBagConstraints gbcLabel = criarGridBagConstraints(0, gridy, 1, GridBagConstraints.LINE_START);
+        panel.add(label, gbcLabel);
+
+        JPasswordField campoSenha = new JPasswordField(20);
+        estilizarCampoTexto(campoSenha);
+        GridBagConstraints gbcCampoSenha = criarGridBagConstraints(1, gridy, 1, GridBagConstraints.LINE_START);
+        panel.add(campoSenha, gbcCampoSenha);
+
+        return campoSenha;
+    }
+
+    // Configura o layout do componente
+    private GridBagConstraints criarGridBagConstraints(int gridx, int gridy, int gridwidth, int anchor) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        gbc.gridwidth = gridwidth;
+        gbc.anchor = anchor;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        return gbc;
+    }
+
+    // Estiliza um campo de texto
     private void estilizarCampoTexto(JTextField campoTexto) {
-        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Fonte mais moderna
+        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         campoTexto.setBackground(Color.WHITE);
         campoTexto.setForeground(Color.BLACK);
         campoTexto.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
 
-    private void estilizarCampoTexto(JPasswordField campoTexto) {
-        campoTexto.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Fonte mais moderna
-        campoTexto.setBackground(Color.WHITE);
-        campoTexto.setForeground(Color.BLACK);
-        campoTexto.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-    }
-
+    // Estiliza um botão
     private void estilizarBotao(JButton botao) {
-        botao.setFont(new Font("Segoe UI", Font.BOLD, 14));  // Fonte mais moderna
+        botao.setFont(new Font("Segoe UI", Font.BOLD, 14));
         botao.setBackground(Color.ORANGE);
         botao.setForeground(Color.BLACK);
         botao.setFocusPainted(false);
-        botao.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 2));
-        botao.setPreferredSize(new Dimension(315, 23));
+        botao.setBorder(new LineBorder(Color.ORANGE, 2));
     }
 
-    private void cadastrarUsuario(String nome, String email, String senha) {
-        // A lógica de cadastro do usuário seria implementada aqui
-        JOptionPane.showMessageDialog(this, "Usuário cadastrado!");
+    // Processa o cadastro do usuário
+    private void processarCadastro() {
+        String nome = nomeField.getText();
+        String email = emailField.getText();
+        String senha = new String(senhaField.getPassword());
+        LocalDate dataNascimento = parseDataNascimento(dataNascimentoField.getText());
+        String cpf = cpfField.getText();
+
+        if (dataNascimento != null) {
+            cadastrarUsuario(nome, email, senha, dataNascimento, cpf);
+        } else {
+            JOptionPane.showMessageDialog(this, "Data de nascimento inválida. Use o formato yyyy-MM-dd.");
+        }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-        	TelaCadastroParticipante tela = new TelaCadastroParticipante();
-            tela.setVisible(true);
-        });
+    // Converte uma string para data
+    private LocalDate parseDataNascimento(String data) {
+        try {
+            return LocalDate.parse(data, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    // Realiza o cadastro do usuário
+    private void cadastrarUsuario(String nome, String email, String senha, LocalDate dataNascimento, String cpf) {
+        CadastroParticipanteService cadastroService = new CadastroParticipanteService();
+        try {
+            boolean sucesso = cadastroService.cadastrarParticipante(nome, email, senha, dataNascimento, cpf);
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuário: " + e.getMessage());
+        }
     }
 }
