@@ -1,5 +1,6 @@
 package entities;
 
+import services.CadastroAdminService;
 import services.CadastroParticipanteService;
 import services.LoginService;
 
@@ -42,6 +43,9 @@ public class Servidor {
             case "cadastrarParticipante":
                 processarCadastroParticipante(mensagem);
                 break;
+            case "cadastrarAdmin":
+                processarCadastroAdmin(mensagem);
+                break;
             default:
                 System.out.println("Operação desconhecida.");
                 JOptionPane.showMessageDialog(null, "Operação não cadastrada: " + operacao, "Erro", JOptionPane.WARNING_MESSAGE);
@@ -71,6 +75,30 @@ public class Servidor {
         } catch (Exception e) {
             System.err.println("Erro ao processar cadastro: " + e.getMessage());
             JOptionPane.showMessageDialog(null, "Erro ao processar cadastro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+ // Método para processar o cadastro de um administrador
+    private void processarCadastroAdmin(Mensagem mensagem) {
+        String nome = mensagem.getNome();
+        String email = mensagem.getEmail();
+        String senha = mensagem.getSenha();
+        String cargo = mensagem.getCargo();
+        LocalDate dataContratacao = LocalDate.parse(mensagem.getDataContratacao());
+
+        // Implementar lógica para cadastrar o administrador no banco de dados
+        // Exemplo de implementação:
+        try {
+            CadastroAdminService cadastroAdminService = new CadastroAdminService();
+            boolean sucesso = cadastroAdminService.cadastrarAdmin(nome, email, senha, cargo, dataContratacao);
+            if (sucesso) {
+                System.out.println("Administrador cadastrado com sucesso: " + nome);
+            } else {
+                System.out.println("Falha ao cadastrar o administrador: " + nome);
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao processar cadastro do administrador: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro ao processar cadastro do administrador: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

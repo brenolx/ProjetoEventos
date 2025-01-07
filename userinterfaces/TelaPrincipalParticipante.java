@@ -54,7 +54,7 @@ public class TelaPrincipalParticipante extends JFrame {
         panel.add(menuLateral, BorderLayout.WEST);
 
         // Área Principal
-        JLabel labelBemVindo = new JLabel("Bem-vindo, administrador!");
+        JLabel labelBemVindo = new JLabel("Bem-vindo, participante!");
         labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
         labelBemVindo.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(labelBemVindo, BorderLayout.CENTER);
@@ -103,7 +103,6 @@ public class TelaPrincipalParticipante extends JFrame {
         });
     }
 }
-
 
 
 

@@ -6,7 +6,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.io.IOException;
-import services.CadastroParticipanteService;
+import entities.Mensagem;
+import services.GerenciadorServidor;
 
 public class TelaCadastroParticipante extends JFrame {
 
@@ -15,8 +16,10 @@ public class TelaCadastroParticipante extends JFrame {
     private JPasswordField senhaField;
     private JTextField dataNascimentoField;
     private JTextField cpfField;
+    private GerenciadorServidor gerenciadorServidor;
 
     public TelaCadastroParticipante() {
+        gerenciadorServidor = new GerenciadorServidor(); // Inicializa o gerenciador de servidor
         setTitle("Cadastro de Participante");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,8 +30,9 @@ public class TelaCadastroParticipante extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Título
-        JLabel lblTitulo = new JLabel("<html><span style='font-size:21px'>Cadastro de Participante:</span></html>", SwingConstants.CENTER);
-        
+        JLabel lblTitulo = new JLabel("<html><span style='font-size:21px'>Cadastro de Participante:</span></html>",
+                SwingConstants.CENTER);
+
         // Componentes
         JLabel lblNome = new JLabel("Nome:", SwingConstants.CENTER);
         nomeField = new JTextField();
@@ -42,7 +46,7 @@ public class TelaCadastroParticipante extends JFrame {
         senhaField = new JPasswordField();
         senhaField.setPreferredSize(new Dimension(200, 20));
 
-        JLabel lblDataNascimento = new JLabel("Data de Nascimento:", SwingConstants.CENTER);
+        JLabel lblDataNascimento = new JLabel("Data de Nascimento (dd/MM/yyyy):", SwingConstants.CENTER);
         dataNascimentoField = new JTextField();
         dataNascimentoField.setPreferredSize(new Dimension(200, 20));
         configurarPlaceholderData();
@@ -109,11 +113,11 @@ public class TelaCadastroParticipante extends JFrame {
 
     // Configura o placeholder do campo de data
     private void configurarPlaceholderData() {
-        dataNascimentoField.setText("yyyy-MM-dd");
+        dataNascimentoField.setText("dd/MM/yyyy");
         dataNascimentoField.setForeground(Color.GRAY);
         dataNascimentoField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                if (dataNascimentoField.getText().equals("yyyy-MM-dd")) {
+                if (dataNascimentoField.getText().equals("dd/MM/yyyy")) {
                     dataNascimentoField.setText("");
                     dataNascimentoField.setForeground(Color.BLACK);
                 }
@@ -121,7 +125,7 @@ public class TelaCadastroParticipante extends JFrame {
 
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (dataNascimentoField.getText().isEmpty()) {
-                    dataNascimentoField.setText("yyyy-MM-dd");
+                    dataNascimentoField.setText("dd/MM/yyyy");
                     dataNascimentoField.setForeground(Color.GRAY);
                 }
             }
@@ -137,44 +141,39 @@ public class TelaCadastroParticipante extends JFrame {
         String cpf = cpfField.getText();
 
         if (dataNascimento != null) {
-            cadastrarUsuario(nome, email, senha, dataNascimento, cpf);
+            enviarCadastroParaServidor(nome, email, senha, dataNascimento, cpf);
         } else {
-            JOptionPane.showMessageDialog(this, "Data de nascimento inválida. Use o formato yyyy-MM-dd.");
+            JOptionPane.showMessageDialog(this, "Data de nascimento inválida. Use o formato dd/MM/yyyy.");
         }
     }
 
-    // Converte uma string para data
+    // Converte uma string para data no formato dd/MM/yyyy
     private LocalDate parseDataNascimento(String data) {
         try {
-            return LocalDate.parse(data, DateTimeFormatter.ISO_LOCAL_DATE);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return LocalDate.parse(data, formatter);
         } catch (DateTimeParseException e) {
             return null;
         }
     }
 
-    // Realiza o cadastro do usuário
-    private void cadastrarUsuario(String nome, String email, String senha, LocalDate dataNascimento, String cpf) {
-        CadastroParticipanteService cadastroService = new CadastroParticipanteService();
-        try {
-            boolean sucesso = cadastroService.cadastrarParticipante(nome, email, senha, dataNascimento, cpf);
-            if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuário: " + e.getMessage());
-        }
+    // Envia os dados de cadastro para o servidor
+    private void enviarCadastroParaServidor(String nome, String email, String senha, LocalDate dataNascimento, String cpf) {
+        Mensagem mensagem = new Mensagem();
+        mensagem.setOperacao("cadastrarParticipante");
+        mensagem.setNome(nome);
+        mensagem.setEmail(email);
+        mensagem.setSenha(senha);
+        mensagem.setDataNascimento(dataNascimento.toString()); // Adiciona a data de nascimento
+        mensagem.setCpf(cpf);
+
+        gerenciadorServidor.enviarMensagem(mensagem); // Envia a mensagem para o servidor
     }
 
     // Método para voltar à tela de login
     private void voltarParaLogin() {
-        // Supondo que você tem uma classe TelaLogin
         TelaLogin telaLogin = new TelaLogin();
         telaLogin.setVisible(true);
         dispose();
-    }
-
-    public static void main(String[] args) {
-        TelaCadastroParticipante frame = new TelaCadastroParticipante();
-        frame.setVisible(true);
     }
 }

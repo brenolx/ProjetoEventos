@@ -2,7 +2,7 @@ package services;
 
 import dao.BancoDados;
 import dao.UsuarioDAO;
-import entities.Participante;
+import entities.Administrador;
 import enuns.TipoUsuario;
 import javax.swing.JOptionPane;
 import java.io.IOException;
@@ -10,24 +10,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class CadastroParticipanteService {
+public class CadastroAdminService {
 
-    public boolean cadastrarParticipante(String nome, String email, String senha, LocalDate dataNascimento, String cpf) throws IOException {
+    public boolean cadastrarAdmin(String nome, String email, String senha, String cargo, LocalDate dataContratacao) throws IOException {
         // Verificar se todos os campos obrigatórios estão preenchidos
         if (nome == null || nome.trim().isEmpty() ||
             email == null || email.trim().isEmpty() ||
             senha == null || senha.trim().isEmpty() ||
-            dataNascimento == null || // Verifica se a data é nula
-            cpf == null || cpf.trim().isEmpty()) {
+            cargo == null || cargo.trim().isEmpty() ||
+            dataContratacao == null) {
             
             JOptionPane.showMessageDialog(null, "Por favor, preencha todos os campos obrigatórios.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
             return false; // Retorna false se algum campo obrigatório não estiver preenchido
-        }
-
-        // Validar o formato do CPF
-        if (!validarCPF(cpf)) {
-            JOptionPane.showMessageDialog(null, "CPF inválido. O CPF deve ter 11 dígitos.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
-            return false; // Retorna false se o CPF for inválido
         }
 
         // Validar o formato do email
@@ -59,18 +53,18 @@ public class CadastroParticipanteService {
                 return false;
             }
 
-            // Criar um novo participante
-            Participante participante = new Participante();
-            participante.setNomeCompleto(nome);
-            participante.setEmail(email);
-            participante.setSenha(senha);
-            participante.setDataNascimento(dataNascimento); // Data já está no formato LocalDate
-            participante.setCpf(cpf);
-            participante.setTipoUsuario(TipoUsuario.PARTICIPANTE); // Define o tipo de usuário
+            // Criar um novo administrador
+            Administrador admin = new Administrador();
+            admin.setNomeCompleto(nome);
+            admin.setEmail(email);
+            admin.setSenha(senha);
+            admin.setCargo(cargo);
+            admin.setDataContratacao(dataContratacao); // Data já está no formato LocalDate
+            admin.setTipoUsuario(TipoUsuario.ADMINISTRADOR); // Define o tipo de usuário
 
-            // Adicionar o participante ao banco de dados
-            usuarioDAO.adicionarUsuario(participante);
-            JOptionPane.showMessageDialog(null, "Participante cadastrado com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
+            // Adicionar o administrador ao banco de dados
+            usuarioDAO.adicionarUsuario(admin);
+            JOptionPane.showMessageDialog(null, "Administrador cadastrado com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
             return true; // Cadastro bem-sucedido
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao realizar cadastro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -85,24 +79,6 @@ public class CadastroParticipanteService {
                 JOptionPane.showMessageDialog(null, "Erro ao desconectar do banco de dados: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    // Método para validar o CPF
-    private boolean validarCPF(String cpf) {
-        // Remove caracteres não numéricos
-        cpf = cpf.replaceAll("[^0-9]", "");
-
-        // Verifica se o CPF tem 11 dígitos
-        if (cpf.length() != 11) {
-            return false;
-        }
-
-        // Verifica se o CPF é uma sequência de números repetidos
-        if (cpf.matches("(\\d)\\1{10}")) {
-            return false;
-        }
-
-        return true; // CPF é válido se passou nas verificações
     }
 
     // Método para validar o formato do email

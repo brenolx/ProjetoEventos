@@ -2,12 +2,14 @@ package entities;
 
 public class Mensagem {
 
-    private String operacao;          // Tipo: String - A operação a ser realizada (ex: "cadastrarParticipante")
-    private String nome;              // Tipo: String - Nome do participante
-    private String senha;             // Tipo: String - Senha do participante
-    private String email;             // Tipo: String - Email do participante
+    private String operacao;          // Tipo: String - A operação a ser realizada (ex: "cadastrarParticipante" ou "cadastrarAdmin")
+    private String nome;              // Tipo: String - Nome do participante ou administrador
+    private String senha;             // Tipo: String - Senha do participante ou administrador
+    private String email;             // Tipo: String - Email do participante ou administrador
     private String dataNascimento;    // Tipo: String - Data de nascimento do participante (formato: "dd/MM/yyyy")
     private String cpf;               // Tipo: String - CPF do participante
+    private String cargo;             // Tipo: String - Cargo do administrador
+    private String dataContratacao;   // Tipo: String - Data de contratação do administrador (formato: "yyyy-MM-dd")
 
     // Getters e Setters
     public String getOperacao() {
@@ -58,9 +60,26 @@ public class Mensagem {
         this.cpf = cpf;
     }
 
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getDataContratacao() {
+        return dataContratacao;
+    }
+
+    public void setDataContratacao(String dataContratacao) {
+        this.dataContratacao = dataContratacao;
+    }
+
     @Override
     public String toString() {
         return "Mensagem [operacao=" + operacao + ", nome=" + nome + ", senha=" + senha + ", email=" + email + 
-               ", dataNascimento=" + dataNascimento + ", cpf=" + cpf + "]";
+               ", dataNascimento=" + dataNascimento + ", cpf=" + cpf + ", cargo=" + cargo + 
+               ", dataContratacao=" + dataContratacao + "]";
     }
 }

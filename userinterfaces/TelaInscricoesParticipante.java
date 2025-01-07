@@ -57,7 +57,7 @@ public class TelaInscricoesParticipante extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();  // Fecha a tela atual
-                new TelaPrincipalParticipante().setVisible(true);  // Abre a TelaPrincipalParticipantes
+                new TelaInscricoesParticipante().setVisible(true);  // Abre a TelaPrincipalParticipantes
             }
         });
 
