@@ -16,6 +16,9 @@ public class GerenciadorServidor {
     }
 
     public void enviarMensagem(Mensagem mensagem) {
+        // Imprime a mensagem no console
+        System.out.println("Mensagem enviada para o servidor: " + mensagem.toString());
+
         // Se o servidor não estiver inicializado, cria uma nova instância
         if (servidor == null) {
             servidor = new Servidor(mensagem);

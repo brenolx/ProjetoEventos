@@ -34,10 +34,16 @@ public class UsuarioDAO {
                 if (tipoUsuario == TipoUsuario.ADMINISTRADOR) {
                     usuario = new Administrador();
                     ((Administrador) usuario).setCargo(rs.getString("cargo"));
-                    ((Administrador) usuario).setDataContratacao(rs.getDate("data_contratacao").toLocalDate());
+                    // Check for null before converting to LocalDate
+                    if (rs.getDate("data_contratacao") != null) {
+                        ((Administrador) usuario).setDataContratacao(rs.getDate("data_contratacao").toLocalDate());
+                    }
                 } else if (tipoUsuario == TipoUsuario.PARTICIPANTE) {
                     usuario = new Participante();
-                    ((Participante) usuario).setDataNascimento(rs.getDate("data_nascimento").toLocalDate());
+                    // Check for null before converting to LocalDate
+                    if (rs.getDate("data_nascimento") != null) {
+                        ((Participante) usuario).setDataNascimento(rs.getDate("data_nascimento").toLocalDate());
+                    }
                     ((Participante) usuario).setCpf(rs.getString("cpf"));
                 }
                 usuario.setId(rs.getInt("id"));

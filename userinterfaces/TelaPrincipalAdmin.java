@@ -5,9 +5,11 @@ import java.awt.*;
 
 public class TelaPrincipalAdmin extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private String nome; // Alterado para String para melhor uso
+    private JLabel labelBemVindo; // Mover o JLabel para ser um atributo da classe
 
-	public TelaPrincipalAdmin() {
+    public TelaPrincipalAdmin() {
         setTitle("Admin - Gerenciamento de Eventos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -38,15 +40,20 @@ public class TelaPrincipalAdmin extends JFrame {
         panel.add(menuLateral, BorderLayout.WEST);
 
         // Área Principal
-        JLabel labelBemVindo = new JLabel("Bem-vindo, Administrador!");
+        labelBemVindo = new JLabel("Bem-vindo, Administrador " + this.nome + "!");
         labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
         labelBemVindo.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(labelBemVindo, BorderLayout.CENTER);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new TelaPrincipalAdmin().setVisible(true);
-        });
+    public void setNome(String nome) {
+ 
+        this.nome = nome;
+        atualizarMensagem(); // Atualiza a mensagem de boas-vindas
+    }
+
+    private void atualizarMensagem() {
+        // Atualiza o JLabel com a nova mensagem
+        labelBemVindo.setText("Bem-vindo, Administrador " + this.nome + "!");
     }
 }

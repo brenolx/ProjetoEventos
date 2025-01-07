@@ -5,6 +5,8 @@ import dao.UsuarioDAO;
 import entities.Usuario;
 import enuns.TipoUsuario;
 import userinterfaces.TelaGerenciamentoEventos;
+import userinterfaces.TelaPrincipalAdmin;
+
 import javax.swing.JOptionPane;
 
 import java.io.IOException;
@@ -27,13 +29,15 @@ public class LoginService {
             UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
             // Verificar se o usuário existe e obter os dados
             Usuario usuario = usuarioDAO.getUsuarioPorEmail(email);
+            System.out.println(usuario.getNomeCompleto());
 
             // Verificar se o usuário foi encontrado e se a senha está correta
             if (usuario != null && usuario.getSenha().equals(senha)) {
                 // Verificar se o usuário é um administrador
                 if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
                     // Abrir a tela de gerenciamento de eventos
-                    TelaGerenciamentoEventos telaAdmin = new TelaGerenciamentoEventos();
+                	TelaPrincipalAdmin telaAdmin = new TelaPrincipalAdmin();
+                    telaAdmin.setNome(usuario.getNomeCompleto());
                     telaAdmin.setVisible(true);
                 }
                 return true; // Login bem-sucedido

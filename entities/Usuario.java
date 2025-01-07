@@ -49,4 +49,12 @@ public abstract class Usuario {
     public void setTipoUsuario(TipoUsuario tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
     }
+
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", nomeCompleto=" + nomeCompleto + ", email=" + email + ", senha=" + senha
+				+ ", tipoUsuario=" + tipoUsuario + "]";
+	}
+    
+    
 }
