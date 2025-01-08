@@ -10,8 +10,8 @@ import services.GerenciadorServidor;
 
 public class TelaCadastroAdmin extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JTextField nomeField;
+    private static final long serialVersionUID = 1L;
+    private JTextField nomeField;
     private JTextField emailField;
     private JPasswordField senhaField;
     private JTextField cargoField;
@@ -86,10 +86,16 @@ public class TelaCadastroAdmin extends JFrame {
         // Botão de Cadastrar
         JButton btnCadastrar = new JButton("Cadastrar");
         btnCadastrar.addActionListener(e -> processarCadastro());
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy++;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 1;
         add(btnCadastrar, gbc);
+
+        // Botão de Voltar
+        JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.addActionListener(e -> voltarParaLogin());
+        gbc.gridx = 0;
+        add(btnVoltar, gbc);
     }
 
     private void processarCadastro() {
@@ -144,5 +150,10 @@ public class TelaCadastroAdmin extends JFrame {
         mensagem.setDataContratacao(dataContratacao.toString()); // Adicionar a data de contratação
 
         gerenciadorServidor.enviarMensagem(mensagem); // Envia a mensagem para o servidor
+    }
+
+    private void voltarParaLogin() {
+        new TelaLogin().setVisible(true);
+        dispose(); // Fecha a tela atual
     }
 }
