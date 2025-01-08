@@ -17,7 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 public class TelaPrincipalParticipante extends JFrame {
 
@@ -95,12 +94,6 @@ public class TelaPrincipalParticipante extends JFrame {
         	@Override public void actionPerformed(ActionEvent e) { 
         		new TelaInscricoesParticipante().setVisible(true); } 
         	});
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new TelaPrincipalParticipante().setVisible(true);
-        });
     }
 }
 

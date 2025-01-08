@@ -5,13 +5,13 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.io.IOException;
 import entities.Mensagem;
 import services.GerenciadorServidor;
 
 public class TelaCadastroParticipante extends JFrame {
 
-    private JTextField nomeField;
+	private static final long serialVersionUID = 1L;
+	private JTextField nomeField;
     private JTextField emailField;
     private JPasswordField senhaField;
     private JTextField dataNascimentoField;

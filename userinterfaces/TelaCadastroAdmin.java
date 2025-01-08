@@ -9,7 +9,9 @@ import entities.Mensagem;
 import services.GerenciadorServidor;
 
 public class TelaCadastroAdmin extends JFrame {
-    private JTextField nomeField;
+
+	private static final long serialVersionUID = 1L;
+	private JTextField nomeField;
     private JTextField emailField;
     private JPasswordField senhaField;
     private JTextField cargoField;

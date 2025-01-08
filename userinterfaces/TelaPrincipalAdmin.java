@@ -33,10 +33,24 @@ public class TelaPrincipalAdmin extends JFrame {
         JButton btnEventos = new JButton("Eventos");
         JButton btnRelatorios = new JButton("Relatórios");
         btnRelatorios.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        	}
+            public void actionPerformed(ActionEvent e) {
+            	
+            }
         });
         JButton btnSair = new JButton("Sair");
+
+        // Adicionando ActionListener ao botão btnEventos
+        btnEventos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	
+            	TelaPrincipalAdmin.this.setVisible(false);
+            	
+                // Abre a tela de gerenciamento de eventos
+                TelaGerenciamentoEventos telaGerenciamentoEventos = new TelaGerenciamentoEventos();
+                telaGerenciamentoEventos.setVisible(true);
+                
+            }
+        });
 
         // Popup Menu
         JPopupMenu popupMenu = new JPopupMenu();

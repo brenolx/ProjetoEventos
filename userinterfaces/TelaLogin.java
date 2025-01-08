@@ -118,7 +118,7 @@ public class TelaLogin extends JFrame {
         gerenciadorServidor.enviarMensagem(mensagem);
     }
 
-    private void exibirMensagem(String mensagem) {
+    public void exibirMensagem(String mensagem) {
         JOptionPane.showMessageDialog(this, mensagem);
     }
 

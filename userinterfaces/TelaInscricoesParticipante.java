@@ -85,10 +85,4 @@ public class TelaInscricoesParticipante extends JFrame {
             }
         });
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new TelaInscricoesParticipante().setVisible(true);
-        });
-    }
 }
