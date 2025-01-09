@@ -170,4 +170,14 @@ public class UsuarioDAO {
 
         return usuario;
     }
+
+	public boolean removerUsuario(int usuarioId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean atualizarUsuario(Usuario usuario) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

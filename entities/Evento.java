@@ -2,6 +2,7 @@ package entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import enuns.CategoriaEvento;
 import enuns.StatusEvento;
@@ -18,6 +19,7 @@ public class Evento {
     private CategoriaEvento categoria;
     private BigDecimal preco;
     private Administrador organizador;
+    private List<Participante> participantes;
 
     // Getters e Setters
     public int getId() {
@@ -107,4 +109,22 @@ public class Evento {
     public void setOrganizador(Administrador organizador) {
         this.organizador = organizador;
     }
+
+	public List<Participante> getParticipantes() {
+		return participantes;
+	}
+
+	public void setParticipantes(List<Participante> participantes) {
+		this.participantes = participantes;
+	}
+
+	@Override
+	public String toString() {
+		return "Evento [id=" + id + ", titulo=" + titulo + ", descricao=" + descricao + ", dataHora=" + dataHora
+				+ ", duracaoHoras=" + duracaoHoras + ", local=" + local + ", capacidadeMaxima=" + capacidadeMaxima
+				+ ", status=" + status + ", categoria=" + categoria + ", preco=" + preco + ", organizador="
+				+ organizador + ", participantes=" + participantes + "]";
+	}
+	
+	
 }

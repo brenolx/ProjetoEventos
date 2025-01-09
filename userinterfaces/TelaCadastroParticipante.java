@@ -46,7 +46,7 @@ public class TelaCadastroParticipante extends JFrame {
         senhaField = new JPasswordField();
         senhaField.setPreferredSize(new Dimension(200, 20));
 
-        JLabel lblDataNascimento = new JLabel("Data de Nascimento (dd/MM/yyyy):", SwingConstants.CENTER);
+        JLabel lblDataNascimento = new JLabel("Data de Nascimento:", SwingConstants.CENTER);
         dataNascimentoField = new JTextField();
         dataNascimentoField.setPreferredSize(new Dimension(200, 20));
         configurarPlaceholderData();
@@ -57,7 +57,8 @@ public class TelaCadastroParticipante extends JFrame {
 
         JButton btnCadastrar = new JButton("Cadastrar");
         JButton btnVoltar = new JButton("Voltar");
-        btnVoltar.setPreferredSize(new Dimension(80, 30)); // Botão menor
+        btnCadastrar.setPreferredSize(new Dimension(80, 30));
+        btnVoltar.setPreferredSize(new Dimension(80, 30));
 
         // Adicionando os Componentes ao JFrame em duas colunas
         gbc.gridx = 0;
@@ -172,8 +173,7 @@ public class TelaCadastroParticipante extends JFrame {
 
     // Método para voltar à tela de login
     private void voltarParaLogin() {
-        TelaLogin telaLogin = new TelaLogin();
-        telaLogin.setVisible(true);
+    	new TelaLogin().setVisible(true);
         dispose();
     }
 }

@@ -3,6 +3,7 @@ package entities;
 import services.CadastroAdminService;
 import services.CadastroParticipanteService;
 import services.LoginService;
+import userinterfaces.TelaLogin;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -31,14 +32,12 @@ public class Servidor {
     }
 
     // Método que processa a mensagem e retorna uma resposta
-    private void processarMensagem(Mensagem mensagem) throws IOException {
+    private void processarMensagem(Mensagem mensagem) throws IOException  {
         String operacao = mensagem.getOperacao();
         
         switch (operacao) {
             case "login":
-                LoginService loginService = new LoginService();
-                // Chama o método logarUsuario do LoginService
-                loginService.logarUsuario(mensagem.getEmail(), mensagem.getSenha());
+            	processarLogin(mensagem);
                 break;
             case "cadastrarParticipante":
                 processarCadastroParticipante(mensagem);
@@ -52,8 +51,19 @@ public class Servidor {
                 break;
         }
     }
+    
+    // Método para processar o login do usuario
+    private void processarLogin(Mensagem mensagem) throws IOException {
+		
+    	LoginService loginService = new LoginService();
+        // Chama o método logarUsuario do LoginService
+    	boolean sucesso = loginService.logarUsuario(mensagem.getEmail(), mensagem.getSenha());
+    	if (!sucesso) {
+    		new TelaLogin().setVisible(true);
+    	}
+	}
 
-    // Método para processar o cadastro de um participante
+	// Método para processar o cadastro de um participante
     private void processarCadastroParticipante(Mensagem mensagem) {
         CadastroParticipanteService cadastroService = new CadastroParticipanteService();
         try {

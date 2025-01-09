@@ -1,19 +1,26 @@
 package userinterfaces;
 
 import javax.swing.*;
+import entities.Administrador;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class TelaPrincipalAdmin extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private String nome; // Alterado para String para melhor uso
-    private JLabel labelBemVindo; // Mover o JLabel para ser um atributo da classe
+    private JLabel labelBemVindo;
+    private Administrador adm;
 
-    public TelaPrincipalAdmin() {
+    public TelaPrincipalAdmin(Administrador adm) {
+        this.adm = adm;
+        iniciarComponentes();
+    }
+
+    private void iniciarComponentes() {
         setTitle("Admin - Gerenciamento de Eventos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -32,28 +39,59 @@ public class TelaPrincipalAdmin extends JFrame {
         JButton btnUsuarios = new JButton("Usuários");
         JButton btnEventos = new JButton("Eventos");
         JButton btnRelatorios = new JButton("Relatórios");
-        btnRelatorios.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	
-            }
-        });
         JButton btnSair = new JButton("Sair");
 
-        // Adicionando ActionListener ao botão btnEventos
+        // Ação do botão "Eventos"
         btnEventos.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-            	
-            	TelaPrincipalAdmin.this.setVisible(false);
-            	
-                // Abre a tela de gerenciamento de eventos
-                TelaGerenciamentoEventos telaGerenciamentoEventos = new TelaGerenciamentoEventos();
-                telaGerenciamentoEventos.setVisible(true);
-                
+                TelaPrincipalAdmin.this.setVisible(false);
+                try {
+                    TelaGerenciamentoEventos telaGerenciamentoEventos = new TelaGerenciamentoEventos(TelaPrincipalAdmin.this, adm);
+                    telaGerenciamentoEventos.setVisible(true);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
-        // Popup Menu
+        // Popup Menu para Relatórios
+        JPopupMenu popupMenu = criarMenuPopupRelatorios();
+        btnRelatorios.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                popupMenu.show(btnRelatorios, btnRelatorios.getWidth(), -3);
+            }
+        });
+
+        // Adiciona os botões ao menu lateral
+        menuLateral.add(btnUsuarios);
+        menuLateral.add(btnEventos);
+        menuLateral.add(btnRelatorios);
+        menuLateral.add(btnSair);
+
+        panel.add(menuLateral, BorderLayout.WEST);
+
+        // Área Principal
+        labelBemVindo = new JLabel();
+        labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
+        labelBemVindo.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(labelBemVindo, BorderLayout.CENTER);
+
+        atualizarMensagem();
+    }
+
+    private void atualizarMensagem() {
+        if (adm != null) {
+            labelBemVindo.setText("Bem-vindo, Administrador " + adm.getNomeCompleto() + "!");
+        } else {
+            labelBemVindo.setText("Bem-vindo, Administrador!");
+        }
+    }
+
+    private JPopupMenu criarMenuPopupRelatorios() {
         JPopupMenu popupMenu = new JPopupMenu();
+
         JMenuItem itemRelatorioParticipantes = new JMenuItem("Relatório de Participantes");
         JMenuItem itemEventosPopulares = new JMenuItem("Eventos Mais Populares");
         JMenuItem itemEventosNaoOcorridos = new JMenuItem("Eventos Não Ocorridos");
@@ -64,35 +102,6 @@ public class TelaPrincipalAdmin extends JFrame {
         popupMenu.add(itemEventosNaoOcorridos);
         popupMenu.add(itemRelatorioDetalhado);
 
-        // Adicionando ação de mostrar o menu popup ao passar o mouse
-        btnRelatorios.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                popupMenu.show(btnRelatorios, btnRelatorios.getWidth(), -3);
-            }
-        });
-
-        menuLateral.add(btnUsuarios);
-        menuLateral.add(btnEventos);
-        menuLateral.add(btnRelatorios);
-        menuLateral.add(btnSair);
-
-        panel.add(menuLateral, BorderLayout.WEST);
-
-        // Área Principal
-        labelBemVindo = new JLabel("Bem-vindo, Administrador " + this.nome + "!");
-        labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
-        labelBemVindo.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(labelBemVindo, BorderLayout.CENTER);
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-        atualizarMensagem(); // Atualiza a mensagem de boas-vindas
-    }
-
-    private void atualizarMensagem() {
-        // Atualiza o JLabel com a nova mensagem
-        labelBemVindo.setText("Bem-vindo, Administrador " + this.nome + "!");
+        return popupMenu;
     }
 }

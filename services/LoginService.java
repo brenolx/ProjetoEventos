@@ -2,94 +2,112 @@ package services;
 
 import dao.BancoDados;
 import dao.UsuarioDAO;
+import entities.Administrador;
 import entities.Usuario;
 import enuns.TipoUsuario;
 import userinterfaces.TelaPrincipalAdmin;
 
 import javax.swing.JOptionPane;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class LoginService {
 
-    public boolean logarUsuario(String email, String senha) throws IOException {
-        // Validação de campos vazios
-        if (email == null || email.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "O campo de email não pode estar vazio.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        
-        if (senha == null || senha.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "O campo de senha não pode estar vazio.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
+	public boolean logarUsuario(String email, String senha) throws IOException {
+	    if (!validarCampos(email, senha)) {
+	        return false;
+	    }
 
-        // Validação de formato de email
-        if (!isEmailValido(email)) {
-            JOptionPane.showMessageDialog(null, "O email fornecido não é válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+	    Connection conn = null; // Declarar a conexão aqui
+	    try {
+	        conn = BancoDados.conectar();
+	        if (conn == null) {
+	            mostrarErro("Erro: Conexão com o banco de dados não foi estabelecida.");
+	            return false;
+	        }
+
+	        Usuario usuario = obterUsuarioPorEmail(conn, email);
+	        return verificarCredenciais(usuario, senha);
+	    } catch (SQLException e) {
+	        mostrarErro("Erro ao realizar login: " + e.getMessage());
+	        return false;
+	    } finally {
+	        // Fechar a conexão no bloco finally
+	        try {
+	            if (conn != null) {
+	                BancoDados.desconectar();
+	            }
+	        } catch (SQLException e) {
+	            mostrarErro("Erro ao desconectar do banco de dados: " + e.getMessage());
+	        }
+	    }
+	}
+
+    private boolean validarCampos(String email, String senha) {
+        if (isCampoVazio(email, "O campo de email não pode estar vazio.") ||
+            isCampoVazio(senha, "O campo de senha não pode estar vazio.") ||
+            !isEmailValido(email) ||
+            !isSenhaValida(senha)) {
             return false;
         }
+        return true;
+    }
 
-        // Validação de comprimento da senha
+    private boolean isCampoVazio(String campo, String mensagemErro) {
+        if (campo == null || campo.trim().isEmpty()) {
+            mostrarErro(mensagemErro);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isSenhaValida(String senha) {
         if (senha.length() < 6) {
-            JOptionPane.showMessageDialog(null, "A senha deve ter pelo menos 6 caracteres.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            mostrarErro("A senha deve ter pelo menos 6 caracteres.");
             return false;
         }
+        return true;
+    }
 
-        Connection conn = null;
-        try {
-            // Conectar ao banco de dados
-            conn = BancoDados.conectar();
-            if (conn == null) {
-                JOptionPane.showMessageDialog(null, "Erro: Conexão com o banco de dados não foi estabelecida.", "Erro de Conexão", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
+    private Usuario obterUsuarioPorEmail(Connection conn, String email) throws SQLException {
+        UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
+        return usuarioDAO.getUsuarioPorEmail(email);
+    }
 
-            // Criar uma instância do UsuarioDAO
-            UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
-            // Verificar se o usuário existe e obter os dados
-            Usuario usuario = usuarioDAO.getUsuarioPorEmail(email);
-            System.out.println(usuario.getNomeCompleto());
+    private boolean verificarCredenciais(Usuario usuario, String senha) {
+        if (usuario == null) {
+            mostrarErro("Usuário não encontrado. Verifique o email inserido.");
+            return false; // Login falhou
+        }
 
-            // Verificar se o usuário foi encontrado e se a senha está correta
-            if (usuario != null && usuario.getSenha().equals(senha)) {
-            	
-                // Verificar se o usuário é um administrador
-                if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
-                	
-                    // Abrir a tela de gerenciamento de eventos
-                    TelaPrincipalAdmin telaAdmin = new TelaPrincipalAdmin();
-                    telaAdmin.setNome(usuario.getNomeCompleto());
-                    telaAdmin.setVisible(true);
-                    
-                } else if (usuario.getTipoUsuario() == TipoUsuario.PARTICIPANTE) {
-                	
-                }
-                return true; // Login bem-sucedido
-            } else {
-                JOptionPane.showMessageDialog(null, "Email ou senha incorretos.", "Erro de Login", JOptionPane.ERROR_MESSAGE);
-                return false; // Login falhou
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao realizar login: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            return false; // Retorna false em caso de erro
-        } finally {
-            // Desconectar do banco de dados
-            try {
-                if (conn != null) {
-                    BancoDados.desconectar();
-                }
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Erro ao desconectar do banco de dados: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            }
+        if (usuario.getSenha().equals(senha)) {
+            abrirTelaPrincipal(usuario);
+            return true; // Login bem-sucedido
+        } else {
+            mostrarErro("Email ou senha incorretos.");
+            return false; // Login falhou
         }
     }
 
-    // Método para validar o formato do email
+    private void abrirTelaPrincipal(Usuario usuario) {
+        if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRADOR) {
+            Administrador admin = (Administrador) usuario; // Cast para Administrador
+            TelaPrincipalAdmin telaAdmin = new TelaPrincipalAdmin(admin);
+            telaAdmin.setVisible(true);
+        } 
+        // Adicione lógica para PARTICIPANTE se necessário
+    }
+
+    private void mostrarErro(String mensagem) {
+        JOptionPane.showMessageDialog(null, mensagem, "Erro", JOptionPane.ERROR_MESSAGE);
+    }
+
     private boolean isEmailValido(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!email.matches(emailRegex)) {
+            mostrarErro("O email fornecido não é válido."); // Mensagem de feedback para email inválido
+        }
         return email.matches(emailRegex);
     }
 }

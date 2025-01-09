@@ -95,13 +95,13 @@ public class TelaLogin extends JFrame {
     private void abrirTelaCadastroParticipante() {
         TelaCadastroParticipante telaCadastro = new TelaCadastroParticipante();
         telaCadastro.setVisible(true);
-        this.setVisible(false); // Oculta a tela de login
+       	dispose(); // Fecha a tela de login
     }
     
     private void abrirTelaCadastroAdmin() {
         TelaCadastroAdmin telaCadastroAdimin = new TelaCadastroAdmin();
         telaCadastroAdimin.setVisible(true);
-        this.setVisible(false); // Oculta a tela de login
+        dispose(); // Fecha a tela de login
     }
 
 
@@ -111,7 +111,7 @@ public class TelaLogin extends JFrame {
         mensagem.setEmail(textField.getText());
         mensagem.setSenha(new String(passwordField.getPassword()));
         enviarMensagem(mensagem);
-        this.setVisible(false);
+        dispose();
     }
 
     private void enviarMensagem(Mensagem mensagem) {
