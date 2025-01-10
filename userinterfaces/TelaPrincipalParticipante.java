@@ -18,11 +18,15 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
+import entities.Participante;
+
 public class TelaPrincipalParticipante extends JFrame {
 
     private static final long serialVersionUID = 1L;
+	private Participante participante;
 
-    public TelaPrincipalParticipante() {
+    public TelaPrincipalParticipante(Participante participante) {
+    	this.participante = participante;
         setTitle("Participante - Principal");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -92,7 +96,8 @@ public class TelaPrincipalParticipante extends JFrame {
      // Adicionando ação ao botão "Inscrições" 
         btnInscricoes.addActionListener(new ActionListener() { 
         	@Override public void actionPerformed(ActionEvent e) { 
-        		new TelaInscricoesParticipante().setVisible(true); } 
+        		setVisible(false);
+        		new TelaInscricoesParticipante(TelaPrincipalParticipante.this).setVisible(true); } 
         	});
     }
 }

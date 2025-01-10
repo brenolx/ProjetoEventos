@@ -3,9 +3,11 @@ package services;
 import dao.BancoDados;
 import dao.UsuarioDAO;
 import entities.Administrador;
+import entities.Participante;
 import entities.Usuario;
 import enuns.TipoUsuario;
 import userinterfaces.TelaPrincipalAdmin;
+import userinterfaces.TelaPrincipalParticipante;
 
 import javax.swing.JOptionPane;
 import java.io.IOException;
@@ -95,8 +97,12 @@ public class LoginService {
             Administrador admin = (Administrador) usuario; // Cast para Administrador
             TelaPrincipalAdmin telaAdmin = new TelaPrincipalAdmin(admin);
             telaAdmin.setVisible(true);
-        } 
-        // Adicione lógica para PARTICIPANTE se necessário
+        } else if (usuario.getTipoUsuario() == TipoUsuario.PARTICIPANTE) {
+            Participante participante = (Participante) usuario; // Cast para Administrador
+            TelaPrincipalParticipante telaParticipante = new TelaPrincipalParticipante(participante);
+            telaParticipante.setVisible(true);
+        }
+        
     }
 
     private void mostrarErro(String mensagem) {

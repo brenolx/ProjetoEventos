@@ -10,8 +10,10 @@ import javax.swing.border.EmptyBorder;
 public class TelaInscricoesParticipante extends JFrame {
 
     private static final long serialVersionUID = 1L;
+	private TelaPrincipalParticipante telaPrincipalParticipante;
 
-    public TelaInscricoesParticipante() {
+    public TelaInscricoesParticipante(TelaPrincipalParticipante telaPrincipalParticipante) {
+    	this.telaPrincipalParticipante = telaPrincipalParticipante;
         setTitle("Inscrições");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 400);
@@ -57,7 +59,7 @@ public class TelaInscricoesParticipante extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();  // Fecha a tela atual
-                new TelaInscricoesParticipante().setVisible(true);  // Abre a TelaPrincipalParticipantes
+                telaPrincipalParticipante.setVisible(true);
             }
         });
 
