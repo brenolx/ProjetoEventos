@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import entities.Mensagem;
-import services.GerenciadorServidor;
+import services.ServidorService;
 
 public class TelaCadastroAdmin extends JFrame {
 
@@ -16,10 +16,10 @@ public class TelaCadastroAdmin extends JFrame {
     private JPasswordField senhaField;
     private JTextField cargoField;
     private JTextField dataContratacaoField;
-    private GerenciadorServidor gerenciadorServidor;
+    private ServidorService servidorService;
 
     public TelaCadastroAdmin() {
-        gerenciadorServidor = new GerenciadorServidor(); // Inicializa o gerenciador de servidor
+        servidorService = new ServidorService(); // Inicializa o gerenciador de servidor
         setTitle("Cadastro de Administrador");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -149,7 +149,7 @@ public class TelaCadastroAdmin extends JFrame {
         mensagem.setCargo(cargo);
         mensagem.setDataContratacao(dataContratacao.toString()); // Adicionar a data de contratação
 
-        gerenciadorServidor.enviarMensagem(mensagem); // Envia a mensagem para o servidor
+        servidorService.enviarMensagem(mensagem); // Envia a mensagem para o servidor
     }
 
     private void voltarParaLogin() {

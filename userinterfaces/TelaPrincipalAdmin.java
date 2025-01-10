@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class TelaPrincipalAdmin extends JFrame {
 
@@ -40,6 +41,20 @@ public class TelaPrincipalAdmin extends JFrame {
         JButton btnEventos = new JButton("Eventos");
         JButton btnRelatorios = new JButton("Relatórios");
         JButton btnSair = new JButton("Sair");
+        
+     // Ação do botão "Usuarios"
+        btnUsuarios.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TelaPrincipalAdmin.this.setVisible(false);
+                try {
+                    TelaGerenciamentoUsuarios telaGerenciamentoUsuario = new TelaGerenciamentoUsuarios(TelaPrincipalAdmin.this);
+                    telaGerenciamentoUsuario.setVisible(true);
+                } catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+            }
+        });
 
         // Ação do botão "Eventos"
         btnEventos.addActionListener(new ActionListener() {

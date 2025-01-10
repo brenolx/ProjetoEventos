@@ -3,16 +3,16 @@ package userinterfaces;
 import javax.swing.*;
 import java.awt.*;
 import entities.Mensagem;
-import services.GerenciadorServidor;
+import services.ServidorService;
 
 public class TelaLogin extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JPasswordField passwordField;
-    private GerenciadorServidor gerenciadorServidor;
+    private ServidorService servidorService;
 
     public TelaLogin() {
-        gerenciadorServidor = new GerenciadorServidor();
+        servidorService = new ServidorService();
         configurarJanela();
         adicionarComponentes();
     }
@@ -115,7 +115,7 @@ public class TelaLogin extends JFrame {
     }
 
     private void enviarMensagem(Mensagem mensagem) {
-        gerenciadorServidor.enviarMensagem(mensagem);
+        servidorService.enviarMensagem(mensagem);
     }
 
     public void exibirMensagem(String mensagem) {

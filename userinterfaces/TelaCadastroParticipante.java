@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import entities.Mensagem;
-import services.GerenciadorServidor;
+import services.ServidorService;
 
 public class TelaCadastroParticipante extends JFrame {
 
@@ -16,10 +16,10 @@ public class TelaCadastroParticipante extends JFrame {
     private JPasswordField senhaField;
     private JTextField dataNascimentoField;
     private JTextField cpfField;
-    private GerenciadorServidor gerenciadorServidor;
+    private ServidorService servidorService;
 
     public TelaCadastroParticipante() {
-        gerenciadorServidor = new GerenciadorServidor(); // Inicializa o gerenciador de servidor
+        servidorService = new ServidorService(); // Inicializa o gerenciador de servidor
         setTitle("Cadastro de Participante");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -168,7 +168,7 @@ public class TelaCadastroParticipante extends JFrame {
         mensagem.setDataNascimento(dataNascimento.toString()); // Adiciona a data de nascimento
         mensagem.setCpf(cpf);
 
-        gerenciadorServidor.enviarMensagem(mensagem); // Envia a mensagem para o servidor
+        servidorService.enviarMensagem(mensagem); // Envia a mensagem para o servidor
     }
 
     // Método para voltar à tela de login

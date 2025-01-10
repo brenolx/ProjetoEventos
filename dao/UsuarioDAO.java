@@ -99,7 +99,7 @@ public class UsuarioDAO {
 
     public List<Usuario> listarUsuarios() throws SQLException {
         List<Usuario> usuarios = new ArrayList<>();
-        String query = "SELECT id, nome_completo, email, tipo_usuario, cargo, data_contratacao, data_nascimento, cpf FROM usuarios";
+        String query = "SELECT id, nome_completo, email, senha, tipo_usuario, cargo, data_contratacao, data_nascimento, cpf FROM usuarios";
 
         try (PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
@@ -176,8 +176,35 @@ public class UsuarioDAO {
 		return false;
 	}
 
-	public boolean atualizarUsuario(Usuario usuario) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	// Método para atualizar um usuário
+    public boolean atualizarUsuario(Usuario usuario) throws SQLException {
+        String query = "UPDATE usuarios SET nome_completo = ?, email = ?, tipo_usuario = ?, cargo = ?, data_contratacao = ?, data_nascimento = ?, cpf = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, usuario.getNomeCompleto());
+            stmt.setString(2, usuario.getEmail());
+            stmt.setString(3, usuario.getTipoUsuario().name()); // Define o tipo de usuário
+
+            if (usuario instanceof Administrador) {
+                Administrador admin = (Administrador) usuario;
+                stmt.setString(4, admin.getCargo());
+                stmt.setDate(5, java.sql.Date.valueOf(admin.getDataContratacao())); // Data de contratação
+                stmt.setDate(6, null); // Administrador não possui data de nascimento
+                stmt.setString(7, null); // Administrador não possui CPF
+            } else if (usuario instanceof Participante) {
+                Participante participante = (Participante) usuario;
+                stmt.setString(4, null); // Participante não possui cargo
+                stmt.setDate(5, null); // Participante não possui data de contratação
+                stmt.setDate(6, java.sql.Date.valueOf(participante.getDataNascimento())); // Data de nascimento
+                stmt.setString(7, participante.getCpf()); // CPF do participante
+            }
+
+            stmt.setInt(8, usuario.getId()); // ID do usuário a ser atualizado
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Retorna true se a atualização foi bem-sucedida
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao atualizar usuário: " + e.getMessage(), e);
+        }
+    }
 }
