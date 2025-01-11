@@ -62,8 +62,8 @@ public class TelaPrincipalAdmin extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 TelaPrincipalAdmin.this.setVisible(false);
                 try {
-                    TelaGerenciamentoEventos telaGerenciamentoEventos = new TelaGerenciamentoEventos(TelaPrincipalAdmin.this, adm);
-                    telaGerenciamentoEventos.setVisible(true);
+                    TelaGerenciamentoEventosAdmin telaGerenciamentoEventosAdmin = new TelaGerenciamentoEventosAdmin(TelaPrincipalAdmin.this, adm);
+                    telaGerenciamentoEventosAdmin.setVisible(true);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }

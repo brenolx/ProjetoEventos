@@ -9,11 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
@@ -99,6 +101,20 @@ public class TelaPrincipalParticipante extends JFrame {
         		setVisible(false);
         		new TelaInscricoesParticipante(TelaPrincipalParticipante.this).setVisible(true); } 
         	});
+        
+        btnEventos.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Ao clicar no botão, abre a tela de gerenciamento de eventos
+                setVisible(false); // Oculta a tela principal
+                try {
+                    new TelaGerenciamentoEventosParticipante(TelaPrincipalParticipante.this).setVisible(true);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(TelaPrincipalParticipante.this, "Erro ao abrir a tela de eventos: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 }
 

@@ -24,11 +24,11 @@ public class TelaCadastroEvento extends JFrame {
     private JTextField capacidadeField;
     private JTextField precoField;
     private JComboBox<String> categoriaComboBox; // ComboBox para selecionar a categoria
-    private TelaGerenciamentoEventos telaGerenciamentoEventos;
+    private TelaGerenciamentoEventosAdmin telaGerenciamentoEventosAdmin;
     private Administrador organizador; // Adicionando o organizador
 
-    public TelaCadastroEvento(TelaGerenciamentoEventos telaGerenciamentoEventos, Administrador organizador) {
-        this.telaGerenciamentoEventos = telaGerenciamentoEventos;
+    public TelaCadastroEvento(TelaGerenciamentoEventosAdmin telaGerenciamentoEventosAdmin, Administrador organizador) {
+        this.telaGerenciamentoEventosAdmin = telaGerenciamentoEventosAdmin;
         this.organizador = organizador; // Inicializando o organizador
         setTitle("Cadastro de Evento");
         setSize(400, 500); // Aumentando a altura da tela
@@ -241,7 +241,7 @@ public class TelaCadastroEvento extends JFrame {
 
         if (sucesso) {
             JOptionPane.showMessageDialog(this, "Evento cadastrado com sucesso!");
-            telaGerenciamentoEventos.carregarEventos(); // Atualiza a lista de eventos
+            telaGerenciamentoEventosAdmin.carregarEventos(); // Atualiza a lista de eventos
             dispose(); // Fecha a tela de cadastro
         } else {
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar evento.");
