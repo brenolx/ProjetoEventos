@@ -33,7 +33,7 @@ import enuns.CategoriaEvento;
 import enuns.StatusEvento; // Import the StatusEvento enum
 import services.EventoService;
 
-public class TelaEventoDetalhado extends JFrame {
+public class TelaEventoDetalhadoAdmin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private int eventoId;
@@ -42,9 +42,9 @@ public class TelaEventoDetalhado extends JFrame {
 	private JComboBox<String> categoriaComboBox, statusComboBox; // Added statusComboBox
 	private Evento evento;
 	private JTable tabelaParticipantes;
-	private TelaGerenciamentoEventos telaGerenciadorEventos;
+	private TelaGerenciamentoEventosAdmin telaGerenciadorEventos;
 
-	public TelaEventoDetalhado(TelaGerenciamentoEventos telaGerenciadorEventos, int eventoId) {
+	public TelaEventoDetalhadoAdmin(TelaGerenciamentoEventosAdmin telaGerenciadorEventos, int eventoId) {
 		this.telaGerenciadorEventos = telaGerenciadorEventos;
 		this.eventoId = eventoId;
 		iniciarComponentes();
