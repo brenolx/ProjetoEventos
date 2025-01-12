@@ -81,9 +81,7 @@ public class UsuarioService {
     public void atualizarUsuario(Usuario usuario) throws SQLException, IOException {
         UsuarioDAO usuarioDAO = new UsuarioDAO(BancoDados.conectar());
         boolean sucesso = usuarioDAO.atualizarUsuario(usuario);
-		if (sucesso) {
-		    JOptionPane.showMessageDialog(null, "Usuário atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-		} else {
+		if (!sucesso) {
 		    JOptionPane.showMessageDialog(null, "Erro ao atualizar usuário.", "Erro", JOptionPane.ERROR_MESSAGE);
 		}
     }

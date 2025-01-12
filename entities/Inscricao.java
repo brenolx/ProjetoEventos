@@ -60,4 +60,11 @@ public class Inscricao {
 	public void setPresencaConfirmada(boolean presencaConfirmada) {
 		this.presencaConfirmada = presencaConfirmada;
 	}
+
+	@Override
+	public String toString() {
+		return "Inscricao [id=" + id + ", evento=" + evento + ", participante=" + participante + ", dataInscricao="
+				+ dataInscricao + ", statusInscricao=" + statusInscricao + ", presencaConfirmada=" + presencaConfirmada
+				+ "]";
+	}
 }

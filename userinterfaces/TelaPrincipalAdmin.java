@@ -69,6 +69,17 @@ public class TelaPrincipalAdmin extends JFrame {
                 }
             }
         });
+        
+     // Ação do botão "Eventos"
+        btnSair.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                TelaLogin telaLogin = new TelaLogin();
+                telaLogin.setVisible(true);
+            }
+        });
+
 
         // Popup Menu para Relatórios
         JPopupMenu popupMenu = criarMenuPopupRelatorios();

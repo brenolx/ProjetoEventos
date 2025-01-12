@@ -152,7 +152,7 @@ public class TelaGerenciamentoEventosParticipante extends JFrame {
         EventoService eventoService = new EventoService();
         List<Evento> eventos;
         try {
-            eventos = eventoService.listarEventos(); // Obtém a lista de eventos
+            eventos = eventoService.listarEventos("ABERTO"); // Obtém a lista de eventos
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Erro ao buscar eventos: " + e.getMessage(), "Erro",
                     JOptionPane.ERROR_MESSAGE);
@@ -181,7 +181,8 @@ public class TelaGerenciamentoEventosParticipante extends JFrame {
         int selectedRow = tableEventos.getSelectedRow(); // Obtém a linha selecionada
         if (selectedRow != -1) {
             int eventoId = (int) model.getValueAt(selectedRow, 0); // Obtém o ID do evento da linha selecionada
-            TelaEventoDetalhadoParticipante telaEventoDetalhado = new TelaEventoDetalhadoParticipante(TelaGerenciamentoEventosParticipante.this, eventoId); // Passa o ID do evento para a tela de detalhes
+            TelaEventoDetalhadoParticipante telaEventoDetalhado = new TelaEventoDetalhadoParticipante(telaParticipante.getParticipante(), eventoId); // Passa o ID do evento para a tela de detalhes
+            telaEventoDetalhado.setLocationRelativeTo(null); // Centraliza a tela de detalhes
             telaEventoDetalhado.setVisible(true); // Exibe a tela de detalhes
         } else {
             JOptionPane.showMessageDialog(this, "Por favor, selecione um evento para ver os detalhes.", "Seleção Inválida", JOptionPane.WARNING_MESSAGE);
@@ -190,7 +191,7 @@ public class TelaGerenciamentoEventosParticipante extends JFrame {
 
     public void carregarEventos() throws IOException {
         EventoService eventoService = new EventoService();
-        List<Evento> eventos = eventoService.listarEventos();
+        List<Evento> eventos = eventoService.listarEventos("ABERTO");
 
         model.setRowCount(0); // Limpa a tabela antes de adicionar novos dados
 

@@ -198,8 +198,8 @@ public class TelaGerenciamentoEventosAdmin extends JFrame {
 	    int selectedRow = tableEventos.getSelectedRow(); // Obtém a linha selecionada
 	    if (selectedRow != -1) {
 	        int eventoId = (int) model.getValueAt(selectedRow, 0); // Obtém o ID do evento da linha selecionada
-	        TelaEventoDetalhadoAdmin telaEventoDetalhado = new TelaEventoDetalhadoAdmin(TelaGerenciamentoEventosAdmin.this, eventoId); // Passa o ID do evento para a tela de detalhes
-	        telaEventoDetalhado.setVisible(true); // Exibe a tela de detalhes
+	        TelaEventoDetalhadoAdmin telaEventoDetalhadoAdmin = new TelaEventoDetalhadoAdmin(TelaGerenciamentoEventosAdmin.this, eventoId); // Passa o ID do evento para a tela de detalhes
+	        telaEventoDetalhadoAdmin.setVisible(true); // Exibe a tela de detalhes
 	    } else {
 	        JOptionPane.showMessageDialog(this, "Por favor, selecione um evento para ver os detalhes.", "Seleção Inválida", JOptionPane.WARNING_MESSAGE);
 	    }

@@ -24,106 +24,89 @@ import entities.Participante;
 
 public class TelaPrincipalParticipante extends JFrame {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	private Participante participante;
 
-    public TelaPrincipalParticipante(Participante participante) {
-    	this.participante = participante;
-        setTitle("Participante - Principal");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
-        setLocationRelativeTo(null);
+	public TelaPrincipalParticipante(Participante participante) {
+		this.participante = participante;
+		setTitle("Participante - Principal");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(600, 400);
+		setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        getContentPane().add(panel);
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		getContentPane().add(panel);
 
-        // Menu Lateral
-        JPanel menuLateral = new JPanel();
-        menuLateral.setLayout(new GridLayout(4, 1, 10, 10));
-        menuLateral.setBackground(new Color(60, 63, 65));
-        menuLateral.setPreferredSize(new Dimension(150, 0));
+		// Menu Lateral
+		JPanel menuLateral = new JPanel();
+		menuLateral.setLayout(new GridLayout(4, 1, 10, 10));
+		menuLateral.setBackground(new Color(60, 63, 65));
+		menuLateral.setPreferredSize(new Dimension(150, 0));
 
-//        JButton btnUsuarios = new JButton("Usuários");
-        JButton btnEventos = new JButton("Eventos");
-        JButton btnInscricoes = new JButton("Inscrições");
-        JButton btnRelatorios = new JButton("Relatórios");
-        JButton btnSair = new JButton("Sair");
+		JButton btnEventos = new JButton("Eventos Abertos");
+		JButton btnInscricoes = new JButton("Inscrições");
+		JButton btnRelatorios = new JButton("Relatórios");
+		JButton btnSair = new JButton("Sair");
 
-//        menuLateral.add(btnUsuarios);
-        menuLateral.add(btnEventos);
-        menuLateral.add(btnInscricoes);
-        menuLateral.add(btnRelatorios);
-        menuLateral.add(btnSair);
+		menuLateral.add(btnEventos);
+		menuLateral.add(btnInscricoes);
+		menuLateral.add(btnRelatorios);
+		menuLateral.add(btnSair);
 
-        panel.add(menuLateral, BorderLayout.WEST);
+		panel.add(menuLateral, BorderLayout.WEST);
 
-        // Área Principal
-        JLabel labelBemVindo = new JLabel("Bem-vindo, participante!");
-        labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
-        labelBemVindo.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(labelBemVindo, BorderLayout.CENTER);
+		// Área Principal
+		JLabel labelBemVindo = new JLabel("Bem-vindo, participante!");
+		labelBemVindo.setFont(new Font("Arial", Font.BOLD, 20));
+		labelBemVindo.setHorizontalAlignment(SwingConstants.CENTER);
+		panel.add(labelBemVindo, BorderLayout.CENTER);
 
-        // Popup Menu -- criar um para cada novo botão
-        JPopupMenu popupMenuRelatorios = new JPopupMenu();
-        JPopupMenu popupMenuEventos = new JPopupMenu();
-        
-        JMenuItem itemEventosInscritos = new JMenuItem("Eventos Inscritos");
-        JMenuItem itemHistoricoParticipacao = new JMenuItem("Histórico/Participação");
-        JMenuItem itemEventosDisponiveis = new JMenuItem("Eventos Disponívels");
-        
-        // popup dos
-        popupMenuRelatorios.add(itemEventosInscritos);
-        popupMenuRelatorios.add(itemHistoricoParticipacao);
-        popupMenuEventos.add(itemEventosDisponiveis);
-        
-        
+		// Popup Menu -- criar um para cada novo botão
+		JPopupMenu popupMenuRelatorios = new JPopupMenu();
+		
+		JMenuItem itemEventosInscritos = new JMenuItem("Eventos Inscritos");
+		JMenuItem itemHistoricoParticipacao = new JMenuItem("Histórico/Participação");
 
-        // Adicionando ação de mostrar o menu popup ao passar o mouse
-        btnRelatorios.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                popupMenuRelatorios.show(btnRelatorios, btnRelatorios.getWidth(), 0);
-            }
-        });
-        
-        btnEventos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                popupMenuEventos.show(btnEventos, btnEventos.getWidth(), 0);
-                
-            }
-        });
-        
-     // Adicionando ação ao botão "Inscrições" 
-        btnInscricoes.addActionListener(new ActionListener() { 
-        	@Override public void actionPerformed(ActionEvent e) { 
-        		setVisible(false);
-        		new TelaInscricoesParticipante(TelaPrincipalParticipante.this).setVisible(true); } 
-        	});
-        
-        btnEventos.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Ao clicar no botão, abre a tela de gerenciamento de eventos
-                setVisible(false); // Oculta a tela principal
-                try {
-                    new TelaGerenciamentoEventosParticipante(TelaPrincipalParticipante.this).setVisible(true);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(TelaPrincipalParticipante.this, "Erro ao abrir a tela de eventos: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-    }
+		// popup dos
+		popupMenuRelatorios.add(itemEventosInscritos);
+		popupMenuRelatorios.add(itemHistoricoParticipacao);
+
+		// Adicionando ação de mostrar o menu popup ao passar o mouse
+		btnRelatorios.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				popupMenuRelatorios.show(btnRelatorios, btnRelatorios.getWidth(), 0);
+			}
+		});
+
+		// Adicionando ação ao botão "Inscrições"
+		btnInscricoes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				System.out.println("Participante: " +  participante);
+				new TelaInscricoesParticipante(TelaPrincipalParticipante.this, participante).setVisible(true);
+			}
+		});
+
+		btnEventos.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Ao clicar no botão, abre a tela de gerenciamento de eventos
+				setVisible(false); // Oculta a tela principal
+				try {
+					new TelaGerenciamentoEventosParticipante(TelaPrincipalParticipante.this).setVisible(true);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(TelaPrincipalParticipante.this,
+							"Erro ao abrir a tela de eventos: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+	}
+
+	public Participante getParticipante() {
+		return participante;
+	}
 }
-
-
-
-
-
-
-
-
-
-

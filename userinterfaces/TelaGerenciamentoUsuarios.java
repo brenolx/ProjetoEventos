@@ -98,7 +98,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         });
     }
 
-    private void carregarUsuarios() {
+    public void carregarUsuarios() {
         try {
             List<Usuario> usuarios = usuarioService.listarUsuarios();
             if (usuarios == null) {
@@ -120,7 +120,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         int selectedRow = tableUsuarios.getSelectedRow(); // Obtém a linha selecionada
         if (selectedRow != -1) {
             int usuarioId = (int) model.getValueAt(selectedRow, 0); // Obtém o ID do usuário da linha selecionada
-            TelaDetalhesUsuario telaDetalhesUsuario = new TelaDetalhesUsuario(usuarioId); // Passa o ID do usuário para a tela de detalhes
+            TelaDetalhesUsuario telaDetalhesUsuario = new TelaDetalhesUsuario(TelaGerenciamentoUsuarios.this, usuarioId); // Passa o ID do usuário para a tela de detalhes
             telaDetalhesUsuario.setVisible(true); // Exibe a tela de detalhes
         } else {
             JOptionPane.showMessageDialog(this, "Por favor, selecione um usuário para ver os detalhes.", "Seleção Inválida", JOptionPane.WARNING_MESSAGE);
@@ -133,6 +133,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
             int usuarioId = (int) model.getValueAt(selectedRow, 0);
             int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir este usuário?", "Confirmação", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
+            	System.out.println("usuario id: " + usuarioId);
                 usuarioService.excluirUsuario(usuarioId);
                 carregarUsuarios(); // Atualiza a lista de usuários
             }

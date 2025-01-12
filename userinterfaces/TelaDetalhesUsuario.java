@@ -32,8 +32,10 @@ public class TelaDetalhesUsuario extends JFrame {
     private JTextField dataContratacaoField; // Campo para Administrador
     private JTextField dataNascimentoField; // Campo para Participante
     private JTextField cpfField; // Campo para Participante
+	private TelaGerenciamentoUsuarios telaGerenciamentoUsuario;
 
-    public TelaDetalhesUsuario(int usuarioId) throws SQLException, IOException {
+    public TelaDetalhesUsuario(TelaGerenciamentoUsuarios telaGerenciamentoUsuario, int usuarioId) throws SQLException, IOException {
+    	this.telaGerenciamentoUsuario = telaGerenciamentoUsuario;
         this.usuarioId = usuarioId;
         inicializarComponentes();
         carregarDetalhesUsuario();
@@ -60,15 +62,16 @@ public class TelaDetalhesUsuario extends JFrame {
 
         // JComboBox para Tipo de Usuário
         tipoUsuarioComboBox = new JComboBox<>(TipoUsuario.values()); // Usando o enum TipoUsuario
+        tipoUsuarioComboBox.addActionListener(e -> atualizarCamposPorTipoUsuario()); // Adiciona o listener
         mainPanel.add(criarCampoComboBox("Tipo de Usuário:", tipoUsuarioComboBox));
 
-        // Campos específicos para Administrador
+        // Campos para Administrador
         cargoField = new JTextField(20);
         dataContratacaoField = new JTextField(20);
         mainPanel.add(criarCampoTexto("Cargo:", cargoField));
         mainPanel.add(criarCampoTexto("Data de Contratação:", dataContratacaoField));
 
-        // Campos específicos para Participante
+        // Campos para Participante
         dataNascimentoField = new JTextField(20);
         cpfField = new JTextField(20);
         mainPanel.add(criarCampoTexto("Data de Nascimento:", dataNascimentoField));
@@ -91,6 +94,125 @@ public class TelaDetalhesUsuario extends JFrame {
         add(mainPanel);
     }
 
+    private void carregarDetalhesUsuario() {
+        UsuarioService usuarioService = new UsuarioService();
+        try {
+            Usuario usuario = usuarioService.getUsuarioPorId(usuarioId);
+
+            if (usuario != null) {
+                nomeField.setText(usuario.getNomeCompleto());
+                emailField.setText(usuario.getEmail());
+
+                if (usuario.getTipoUsuario() != null) {
+                    tipoUsuarioComboBox.setSelectedItem(usuario.getTipoUsuario());
+                } else {
+                    JOptionPane.showMessageDialog(this, "Tipo de usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (usuario instanceof Administrador) {
+                    Administrador admin = (Administrador) usuario;
+                    cargoField.setText(admin.getCargo());
+                    if (admin.getDataContratacao() != null) {
+                        dataContratacaoField.setText(admin.getDataContratacao().toString());
+                    }
+                    dataNascimentoField.setEnabled(false);
+                    cpfField.setEnabled(false);
+                } else if (usuario instanceof Participante) {
+                    Participante participante = (Participante) usuario;
+                    dataNascimentoField.setText(participante.getDataNascimento().toString());
+                    cpfField.setText(participante.getCpf());
+                    cargoField.setEnabled(false);
+                    dataContratacaoField.setEnabled(false);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                System.err.println("Usuário não encontrado para o ID: " + usuarioId);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar detalhes do usuário: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            System.err.println("SQLException ao carregar detalhes do usuário: " + e.getMessage());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Erro de I/O: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            System.err.println("IOException ao carregar detalhes do usuário: " + e.getMessage());
+        }
+    }
+
+    private void atualizarCamposPorTipoUsuario() {
+        TipoUsuario tipoUsuario = (TipoUsuario) tipoUsuarioComboBox.getSelectedItem();
+        
+        if (tipoUsuario == TipoUsuario.ADMINISTRADOR) {
+            cargoField.setEnabled(true);
+            dataContratacaoField.setEnabled(true);
+            dataNascimentoField.setEnabled(false); // Desabilita edição de Data de Nascimento
+            cpfField.setEnabled(false); // Desabilita edição de CPF
+        } else if (tipoUsuario == TipoUsuario.PARTICIPANTE) {
+            cargoField.setEnabled(false);
+            dataContratacaoField.setEnabled(false);
+            dataNascimentoField.setEnabled(true); // Habilita edição de Data de Nascimento
+            cpfField.setEnabled(true); // Habilita edição de CPF
+        }
+    }
+
+    private void salvarAlteracoes() {
+        String nome = nomeField.getText();
+        String email = emailField.getText();
+        TipoUsuario tipoUsuario = (TipoUsuario) tipoUsuarioComboBox.getSelectedItem();
+        String cargo = cargoField.getText();
+        String dataContratacao = dataContratacaoField.getText();
+        String dataNascimento = dataNascimentoField.getText();
+        String cpf = cpfField.getText();
+
+        UsuarioService usuarioService = new UsuarioService();
+        try {
+        	System.out.println("Tipo usuario: " + tipoUsuario);
+            if (tipoUsuario == null) {
+                throw new IllegalArgumentException("Tipo de usuário não pode ser nulo.");
+            }
+
+            if (tipoUsuario == TipoUsuario.ADMINISTRADOR) {
+                Administrador admin = new Administrador();
+                admin.setTipoUsuario(tipoUsuario);
+                admin.setId(usuarioId);
+                admin.setNomeCompleto(nome);
+                admin.setEmail(email);
+                admin.setCargo(cargo);
+
+                if (!dataContratacao.isEmpty()) {
+                    admin.setDataContratacao(java.time.LocalDate.parse(dataContratacao));
+                } else {
+                    throw new IllegalArgumentException("Data de contratação não pode estar vazia.");
+                }
+                System.out.println(admin);
+                usuarioService.atualizarUsuario(admin);
+            } else {
+                Participante participante = new Participante();
+                participante.setTipoUsuario(tipoUsuario);
+                participante.setId(usuarioId);
+                participante.setNomeCompleto(nome);
+                participante.setEmail(email);
+
+                if (!dataNascimento.isEmpty()) {
+                    participante.setDataNascimento(java.time.LocalDate.parse(dataNascimento));
+                } else {
+                    throw new IllegalArgumentException("Data de nascimento não pode estar vazia.");
+                }
+
+                participante.setCpf(cpf);
+                usuarioService.atualizarUsuario(participante);
+            }
+            JOptionPane.showMessageDialog(this, "Usuário atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            telaGerenciamentoUsuario.carregarUsuarios();
+            dispose();
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar alterações: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            System.err.println("IllegalArgumentException ao salvar alterações: " + e.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar alterações: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Exception ao salvar alterações: " + e.getMessage());
+        }
+    }
+
     private JPanel criarCampoTexto(String label, JTextField textField) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel lbl = new JLabel(label);
@@ -105,71 +227,5 @@ public class TelaDetalhesUsuario extends JFrame {
         panel.add(lbl);
         panel.add(comboBox);
         return panel;
-    }
-
-    private void carregarDetalhesUsuario() throws SQLException, IOException {
-        UsuarioService usuarioService = new UsuarioService();
-        Usuario usuario = usuarioService.getUsuarioPorId(usuarioId);
-
-        if (usuario != null) {
-            nomeField.setText(usuario.getNomeCompleto());
-            emailField.setText(usuario.getEmail());
-            tipoUsuarioComboBox.setSelectedItem(usuario.getTipoUsuario()); // Usando o enum TipoUsuario
-
-            // Verifica o tipo de usuário e carrega informações específicas
-            if (usuario instanceof Administrador) {
-                Administrador admin = (Administrador) usuario;
-                cargoField.setText(admin.getCargo());
-                if (admin.getDataContratacao() != null) {
-                    dataContratacaoField.setText(admin.getDataContratacao().toString());
-                }
-                dataNascimentoField.setVisible(false); // Esconde campo de data de nascimento
-                cpfField.setVisible(false); // Esconde campo de CPF
-            } else if (usuario instanceof Participante) {
-                Participante participante = (Participante) usuario;
-                dataNascimentoField.setText(participante.getDataNascimento().toString());
-                cpfField.setText(participante.getCpf());
-                cargoField.setVisible(false); // Esconde campo de cargo
-                dataContratacaoField.setVisible(false); // Esconde campo de data de contratação
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void salvarAlteracoes() {
-        String nome = nomeField.getText();
-        String email = emailField.getText();
-        TipoUsuario tipoUsuario = (TipoUsuario) tipoUsuarioComboBox.getSelectedItem(); // Obtendo o tipo de usuário do JComboBox
-        String cargo = cargoField.getText();
-        String dataContratacao = dataContratacaoField.getText();
-        String dataNascimento = dataNascimentoField.getText();
-        String cpf = cpfField.getText();
-
-        
-        UsuarioService usuarioService = new UsuarioService();
-        try {
-            if (tipoUsuario == TipoUsuario.ADMINISTRADOR) {
-                Administrador admin = new Administrador();
-                admin.setId(usuarioId);
-                admin.setNomeCompleto(nome);
-                admin.setEmail(email);
-                admin.setCargo(cargo);
-                admin.setDataContratacao(java.time.LocalDate.parse(dataContratacao));
-                usuarioService.atualizarUsuario(admin);
-            } else {
-                Participante participante = new Participante();
-                participante.setId(usuarioId);
-                participante.setNomeCompleto(nome);
-                participante.setEmail(email);
-                participante.setDataNascimento(java.time.LocalDate.parse(dataNascimento));
-                participante.setCpf(cpf);
-                usuarioService.atualizarUsuario(participante);
-            }
-            JOptionPane.showMessageDialog(this, "Usuário atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            dispose(); // Fecha a tela após salvar
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar alterações: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
     }
 }
