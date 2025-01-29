@@ -2,24 +2,23 @@ package userinterfaces;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import entities.Mensagem;
-import services.ServidorService;
+import services.CadastroParticipanteService;
 
 public class TelaCadastroParticipante extends JFrame {
-
-	private static final long serialVersionUID = 1L;
-	private JTextField nomeField;
+    private static final long serialVersionUID = 1L;
+    private JTextField nomeField;
     private JTextField emailField;
     private JPasswordField senhaField;
     private JTextField dataNascimentoField;
     private JTextField cpfField;
-    private ServidorService servidorService;
+    private CadastroParticipanteService cadastroParticipanteService;
 
     public TelaCadastroParticipante() {
-        servidorService = new ServidorService(); // Inicializa o gerenciador de servidor
+        cadastroParticipanteService = new CadastroParticipanteService();
         setTitle("Cadastro de Participante");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,150 +29,140 @@ public class TelaCadastroParticipante extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Título
-        JLabel lblTitulo = new JLabel("<html><span style='font-size:21px'>Cadastro de Participante:</span></html>",
-                SwingConstants.CENTER);
-
-        // Componentes
-        JLabel lblNome = new JLabel("Nome:", SwingConstants.CENTER);
-        nomeField = new JTextField();
-        nomeField.setPreferredSize(new Dimension(200, 20));
-
-        JLabel lblEmail = new JLabel("Email:", SwingConstants.CENTER);
-        emailField = new JTextField();
-        emailField.setPreferredSize(new Dimension(200, 20));
-
-        JLabel lblSenha = new JLabel("Senha:", SwingConstants.CENTER);
-        senhaField = new JPasswordField();
-        senhaField.setPreferredSize(new Dimension(200, 20));
-
-        JLabel lblDataNascimento = new JLabel("Data de Nascimento:", SwingConstants.CENTER);
-        dataNascimentoField = new JTextField();
-        dataNascimentoField.setPreferredSize(new Dimension(200, 20));
-        configurarPlaceholderData();
-
-        JLabel lblCPF = new JLabel("CPF:", SwingConstants.CENTER);
-        cpfField = new JTextField();
-        cpfField.setPreferredSize(new Dimension(200, 20));
-
-        JButton btnCadastrar = new JButton("Cadastrar");
-        JButton btnVoltar = new JButton("Voltar");
-        btnCadastrar.setPreferredSize(new Dimension(80, 30));
-        btnVoltar.setPreferredSize(new Dimension(80, 30));
-
-        // Adicionando os Componentes ao JFrame em duas colunas
+        JLabel lblTitulo = new JLabel("<html><span style='font-size:21px'>Cadastro de Participante:</span></html>", SwingConstants.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(lblTitulo, gbc);
 
+        // Nome
+        JLabel lblNome = new JLabel("Nome:", SwingConstants.CENTER);
+        nomeField = new JTextField();
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.CENTER;
         add(lblNome, gbc);
         gbc.gridx = 1;
         add(nomeField, gbc);
 
+        // Email
+        JLabel lblEmail = new JLabel("Email:", SwingConstants.CENTER);
+        emailField = new JTextField();
         gbc.gridx = 0;
         gbc.gridy++;
         add(lblEmail, gbc);
         gbc.gridx = 1;
         add(emailField, gbc);
 
+        // Senha
+        JLabel lblSenha = new JLabel("Senha:", SwingConstants.CENTER);
+        senhaField = new JPasswordField();
         gbc.gridx = 0;
         gbc.gridy++;
         add(lblSenha, gbc);
         gbc.gridx = 1;
         add(senhaField, gbc);
 
+        // Data de Nascimento
+        JLabel lblDataNascimento = new JLabel("Data de Nascimento (dd/MM/yyyy):", SwingConstants.CENTER);
+        dataNascimentoField = new JTextField();
         gbc.gridx = 0;
         gbc.gridy++;
         add(lblDataNascimento, gbc);
         gbc.gridx = 1;
         add(dataNascimentoField, gbc);
 
+        // CPF
+        JLabel lblCPF = new JLabel("CPF:", SwingConstants.CENTER);
+        cpfField = new JTextField();
         gbc.gridx = 0;
         gbc.gridy++;
         add(lblCPF, gbc);
         gbc.gridx = 1;
         add(cpfField, gbc);
 
-        // Adicionando os botões
-        gbc.gridx = 0;
+        // Botão de Cadastrar
+        JButton btnCadastrar = new JButton("Cadastrar");
+        btnCadastrar.addActionListener(e -> processarCadastro());
+        gbc.gridx = 1;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(btnVoltar, gbc);
-        gbc.gridx = 1;
         add(btnCadastrar, gbc);
 
-        btnCadastrar.addActionListener(e -> processarCadastro());
+        // Botão de Voltar
+        JButton btnVoltar = new JButton("Voltar");
         btnVoltar.addActionListener(e -> voltarParaLogin());
+        gbc.gridx = 0;
+        add(btnVoltar, gbc);
     }
 
-    // Configura o placeholder do campo de data
-    private void configurarPlaceholderData() {
-        dataNascimentoField.setText("dd/MM/yyyy");
-        dataNascimentoField.setForeground(Color.GRAY);
-        dataNascimentoField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                if (dataNascimentoField.getText().equals("dd/MM/yyyy")) {
-                    dataNascimentoField.setText("");
-                    dataNascimentoField.setForeground(Color.BLACK);
-                }
-            }
-
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                if (dataNascimentoField.getText().isEmpty()) {
-                    dataNascimentoField.setText("dd/MM/yyyy");
-                    dataNascimentoField.setForeground(Color.GRAY);
-                }
-            }
-        });
-    }
-
-    // Processa o cadastro do usuário
     private void processarCadastro() {
         String nome = nomeField.getText();
         String email = emailField.getText();
         String senha = new String(senhaField.getPassword());
-        LocalDate dataNascimento = parseDataNascimento(dataNascimentoField.getText());
+        LocalDate dataNascimento = parseData(dataNascimentoField.getText());
         String cpf = cpfField.getText();
 
-        if (dataNascimento != null) {
-            enviarCadastroParaServidor(nome, email, senha, dataNascimento, cpf);
-        } else {
-            JOptionPane.showMessageDialog(this, "Data de nascimento inválida. Use o formato dd/MM/yyyy.");
+        if (validarDados(nome, email, senha, dataNascimento, cpf)) {
+            boolean sucesso = false;
+			try {
+				sucesso = cadastroParticipanteService.cadastrarParticipante(nome, email, senha, dataNascimento, cpf);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Participante cadastrado com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar participante.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
-    // Converte uma string para data no formato dd/MM/yyyy
-    private LocalDate parseDataNascimento(String data) {
+    private boolean validarDados(String nome, String email, String senha, LocalDate dataNascimento, String cpf) {
+        if (nome.isEmpty() || email.isEmpty() || senha.isEmpty() || dataNascimento == null || cpf.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, preencha todos os campos obrigatórios.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!isEmailValido(email)) {
+            JOptionPane.showMessageDialog(this, "O email fornecido não é válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (senha.length() < 6) {
+            JOptionPane.showMessageDialog(this, "A senha deve ter pelo menos 6 caracteres.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!validarCPF(cpf)) {
+            JOptionPane.showMessageDialog(this, "CPF inválido. O CPF deve ter 11 dígitos.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true; // Retornar true se todas as validações passarem
+    }
+
+    private LocalDate parseData(String data) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             return LocalDate.parse(data, formatter);
         } catch (DateTimeParseException e) {
-            return null;
+            return null; // Retornar null se a data for inválida
         }
     }
 
-    // Envia os dados de cadastro para o servidor
-    private void enviarCadastroParaServidor(String nome, String email, String senha, LocalDate dataNascimento, String cpf) {
-        Mensagem mensagem = new Mensagem();
-        mensagem.setOperacao("cadastrarParticipante");
-        mensagem.setNome(nome);
-        mensagem.setEmail(email);
-        mensagem.setSenha(senha);
-        mensagem.setDataNascimento(dataNascimento.toString()); // Adiciona a data de nascimento
-        mensagem.setCpf(cpf);
-
-        servidorService.enviarMensagem(mensagem); // Envia a mensagem para o servidor
+    private boolean isEmailValido(String email) {
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email.matches(emailRegex);
     }
 
-    // Método para voltar à tela de login
+    private boolean validarCPF(String cpf) {
+        // Remove caracteres não numéricos
+        cpf = cpf.replaceAll("[^0-9]", "");
+
+        // Verifica se o CPF tem 11 dígitos
+        return cpf.length() == 11 && !cpf.matches("(\\d)\\1{10}"); // Verifica se não é uma sequência de números repetidos
+    }
+
     private void voltarParaLogin() {
-    	new TelaLogin().setVisible(true);
-        dispose();
+        new TelaLogin().setVisible(true);
+        dispose(); // Fecha a tela atual
     }
 }

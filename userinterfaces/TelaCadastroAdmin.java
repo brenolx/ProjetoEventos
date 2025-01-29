@@ -2,24 +2,23 @@ package userinterfaces;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import entities.Mensagem;
-import services.ServidorService;
+import services.CadastroAdminService;
 
 public class TelaCadastroAdmin extends JFrame {
-
     private static final long serialVersionUID = 1L;
     private JTextField nomeField;
     private JTextField emailField;
     private JPasswordField senhaField;
     private JTextField cargoField;
     private JTextField dataContratacaoField;
-    private ServidorService servidorService;
+    private CadastroAdminService cadastroAdminService;
 
     public TelaCadastroAdmin() {
-        servidorService = new ServidorService(); // Inicializa o gerenciador de servidor
+        cadastroAdminService = new CadastroAdminService();
         setTitle("Cadastro de Administrador");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,7 +105,17 @@ public class TelaCadastroAdmin extends JFrame {
         LocalDate dataContratacao = parseData(dataContratacaoField.getText());
 
         if (validarDados(nome, email, senha, cargo, dataContratacao)) {
-            enviarCadastroParaServidor(nome, email, senha, cargo, dataContratacao);
+            boolean sucesso = false;
+			try {
+				sucesso = cadastroAdminService.cadastrarAdmin(nome, email, senha, cargo, dataContratacao);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Administrador cadastrado com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar administrador.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -138,18 +147,6 @@ public class TelaCadastroAdmin extends JFrame {
     private boolean isEmailValido(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return email.matches(emailRegex);
-    }
-
-    private void enviarCadastroParaServidor(String nome, String email, String senha, String cargo, LocalDate dataContratacao) {
-        Mensagem mensagem = new Mensagem();
-        mensagem.setOperacao("cadastrarAdmin");
-        mensagem.setNome(nome);
-        mensagem.setEmail(email);
-        mensagem.setSenha(senha);
-        mensagem.setCargo(cargo);
-        mensagem.setDataContratacao(dataContratacao.toString()); // Adicionar a data de contratação
-
-        servidorService.enviarMensagem(mensagem); // Envia a mensagem para o servidor
     }
 
     private void voltarParaLogin() {

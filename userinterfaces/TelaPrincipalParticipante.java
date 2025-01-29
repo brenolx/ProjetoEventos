@@ -10,8 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,21 +21,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import dao.BancoDados;
 import entities.Participante;
 
 public class TelaPrincipalParticipante extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private Participante participante;
-	private Connection conn;
 
-	public TelaPrincipalParticipante(Participante participante) throws SQLException, IOException {
+	public TelaPrincipalParticipante(Participante participante) {
 		this.participante = participante;
-		this.conn = BancoDados.conectar();
-		
-		
-		
 		setTitle("Participante - Principal");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(600, 400);
@@ -73,31 +65,13 @@ public class TelaPrincipalParticipante extends JFrame {
 
 		// Popup Menu -- criar um para cada novo botão
 		JPopupMenu popupMenuRelatorios = new JPopupMenu();
-		
+
 		JMenuItem itemEventosInscritos = new JMenuItem("Eventos Inscritos");
 		JMenuItem itemHistoricoParticipacao = new JMenuItem("Histórico/Participação");
 
-		// popup dos items do botão relatórios
+		// popup dos
 		popupMenuRelatorios.add(itemEventosInscritos);
 		popupMenuRelatorios.add(itemHistoricoParticipacao);
-		
-		// Adicionar o listener ao item de menu 
-		itemEventosInscritos.addActionListener(new ActionListener() { 
-			@Override public void actionPerformed(ActionEvent e) { 
-				SwingUtilities.invokeLater(() -> { 
-					new TelaRelatorioParticipante(conn, participante.getId()).setVisible(true); 
-					}); 
-				} 
-			});
-		
-		// Adicionar o listener ao item de menu Historico eventos passados 
-		itemHistoricoParticipacao.addActionListener(new ActionListener() { 
-					@Override public void actionPerformed(ActionEvent e) { 
-						SwingUtilities.invokeLater(() -> { 
-							new TelaRelatorioParticipacaoEventos(conn, participante.getId()).setVisible(true); 
-							}); 
-						} 
-					});
 
 		// Adicionando ação de mostrar o menu popup ao passar o mouse
 		btnRelatorios.addMouseListener(new MouseAdapter() {
@@ -112,7 +86,6 @@ public class TelaPrincipalParticipante extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
-				System.out.println("Participante: " +  participante);
 				new TelaInscricoesParticipante(TelaPrincipalParticipante.this, participante).setVisible(true);
 			}
 		});
@@ -129,6 +102,26 @@ public class TelaPrincipalParticipante extends JFrame {
 					JOptionPane.showMessageDialog(TelaPrincipalParticipante.this,
 							"Erro ao abrir a tela de eventos: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+		});
+
+		// Adicionar o listener ao item de menu
+		itemEventosInscritos.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(() -> {
+					new TelaRelatorioParticipante(participante.getId()).setVisible(true);
+				});
+			}
+		});
+
+		// Adicionar o listener ao item de menu Historico eventos passados
+		itemHistoricoParticipacao.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(() -> {
+					new TelaRelatorioParticipacaoEventos(participante.getId()).setVisible(true);
+				});
 			}
 		});
 	}

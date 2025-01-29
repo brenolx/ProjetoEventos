@@ -22,7 +22,6 @@ import javax.swing.SwingConstants;
 import entities.Evento;
 import entities.Inscricao;
 import entities.Participante;
-import enuns.StatusEvento;
 import enuns.StatusInscricao;
 import services.EventoService;
 import services.InscricaoService;
@@ -144,18 +143,6 @@ public class TelaEventoDetalhadoParticipante extends JFrame {
     }
 
     private void inscreverNoEvento() {
-        // Verifica se o evento está disponível
-        if (evento == null) {
-            JOptionPane.showMessageDialog(this, "Evento não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Verifica se o evento está aberto para inscrições
-        if (!evento.getStatus().equals(StatusEvento.ABERTO)) {
-            JOptionPane.showMessageDialog(this, "Inscrições só podem ser feitas para eventos abertos.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
         // Obtém o participante atual (supondo que você tenha um método para isso)
         if (participante == null) {
             JOptionPane.showMessageDialog(this, "Você precisa estar logado para se inscrever.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -167,20 +154,21 @@ public class TelaEventoDetalhadoParticipante extends JFrame {
         inscricao.setEvento(evento);
         inscricao.setParticipante(participante);
         inscricao.setDataInscricao(java.time.LocalDateTime.now()); // Define a data da inscrição
-        inscricao.setStatusInscricao(StatusInscricao.ATIVA); // Define o status como ATIVA
+        inscricao.setStatusInscricao(StatusInscricao.PENDENTE); // Define o status como PENDENTE
 
         // Chama o serviço de inscrição para adicionar a nova inscrição
         InscricaoService inscricaoService = new InscricaoService();
-        try {
-            boolean sucesso = inscricaoService.adicionarInscricao(inscricao);
+      
+            boolean sucesso = false;
+			try {
+				sucesso = inscricaoService.adicionarInscricao(inscricao);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Inscrição realizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao realizar a inscrição.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Erro ao realizar a inscrição: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     private void adicionarInformacaoRotulada(JPanel panel, GridBagConstraints gbc, int row, String label, JLabel infoLabel) {

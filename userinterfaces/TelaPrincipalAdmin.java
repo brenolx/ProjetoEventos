@@ -70,7 +70,7 @@ public class TelaPrincipalAdmin extends JFrame {
             }
         });
         
-     // Ação do botão "Eventos"
+     // Ação do botão "Sair"
         btnSair.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

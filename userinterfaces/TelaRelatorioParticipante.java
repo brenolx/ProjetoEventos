@@ -1,14 +1,9 @@
 package userinterfaces;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import dao.InscricaoDAO;
-import entities.Inscricao;
-import entities.Evento;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,141 +12,131 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TelaRelatorioParticipante extends JFrame {
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
+import dao.BancoDados;
+import dao.InscricaoDAO;
+import entities.Evento;
+import entities.Inscricao;
+
+public class TelaRelatorioParticipante extends JFrame {
+    private static final long serialVersionUID = 1L;
     private JTable table;
     private DefaultTableModel model;
 
-    public TelaRelatorioParticipante(Connection conn, int participanteId) {
+    public TelaRelatorioParticipante(int participanteId) {
         setTitle("Relatório de Eventos Inscritos");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Adiciona o título
         JLabel titulo = new JLabel("Relatório detalhado de Eventos Inscritos", SwingConstants.CENTER);
         titulo.setFont(new Font("SansSerif", Font.BOLD, 20));
         add(titulo, BorderLayout.NORTH);
 
-        // Configura o modelo da tabela
+        configurarTabela();
+        carregarDados(participanteId);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(new EmptyBorder(10, 10, 0, 10));
+        add(scrollPane, BorderLayout.CENTER);
+
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnVoltar = criarBotao("Voltar", e -> dispose());
+        JButton btnExportar = criarBotao("Exportar .xls", e -> exportarParaXLS());
+        btnExportar.setBackground(Color.getHSBColor(0.33f, 1f, 0.5f));
+        btnExportar.setForeground(Color.WHITE);
+        panel.add(btnVoltar);
+        panel.add(btnExportar);
+        add(panel, BorderLayout.SOUTH);
+    }
+
+    private void configurarTabela() {
         model = new DefaultTableModel() {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+
         table = new JTable(model);
+        String[] colunas = {"Título", "Descrição", "Data", "Hora", "Duração (Horas)", "Local", "Capacidade Máxima", "Preço R$", "Categoria", "Status Evento", "Status Inscrição"};
+        for (String coluna : colunas) {
+            model.addColumn(coluna);
+        }
 
-        // Adiciona as colunas com títulos em negrito
-        model.addColumn("Título");
-        model.addColumn("Descrição");
-        model.addColumn("Data");
-        model.addColumn("Hora");
-        model.addColumn("Duração (Horas)");
-        model.addColumn("Local");
-        model.addColumn("Capacidade Máxima");
-        model.addColumn("Preço R$");
-        model.addColumn("Categoria");
-        model.addColumn("Status Evento");
-        model.addColumn("Status Inscrição");
-
-        // Define larguras fixas para as colunas
         int[] columnWidths = {80, 120, 70, 50, 100, 80, 120, 70, 100, 80, 100};
         for (int i = 0; i < columnWidths.length; i++) {
             table.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
 
-        // Centraliza os títulos e conteúdos das colunas
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, renderer);
+    }
 
-        // Popula a tabela com dados
-        try {
+    private void carregarDados(int participanteId) {
+        try (Connection conn = BancoDados.conectar()) {
             InscricaoDAO inscricaoDAO = new InscricaoDAO(conn);
             List<Inscricao> inscricoes = inscricaoDAO.listarInscricoes(participanteId);
             for (Inscricao inscricao : inscricoes) {
                 Evento evento = inscricao.getEvento();
                 model.addRow(new Object[]{
-                    evento.getTitulo(),
-                    evento.getDescricao(),
-                    evento.getDataHora().toLocalDate(),
-                    evento.getDataHora().toLocalTime(),
-                    evento.getDuracaoHoras(),
-                    evento.getLocal(),
-                    evento.getCapacidadeMaxima(),
-                    evento.getPreco(),
-                    evento.getCategoria().name(),
-                    evento.getStatus().name(),
-                    inscricao.getStatusInscricao().name()
+                    evento.getTitulo(), evento.getDescricao(), evento.getDataHora().toLocalDate(), evento.getDataHora().toLocalTime(),
+                    evento.getDuracaoHoras(), evento.getLocal(), evento.getCapacidadeMaxima(), evento.getPreco(), evento.getCategoria().name(),
+                    evento.getStatus().name(), inscricao.getStatusInscricao().name()
                 });
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             JOptionPane.showMessageDialog(this, "Erro ao buscar inscrições: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-        }
+        } finally {
+			try {
+				BancoDados.desconectar();
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+		}
+    }
 
-        // Adiciona a tabela à tela com bordas
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(new EmptyBorder(10, 10, 0, 10));
-        add(scrollPane, BorderLayout.CENTER);
-
-        // Cria e adiciona o botão Voltar
-        JButton btnVoltar = new JButton("Voltar");
-        btnVoltar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-
-        // Cria e adiciona o botão Exportar
-        JButton btnExportar = new JButton("Exportar .xls");
-        btnExportar.setBackground(Color.getHSBColor(0.33f, 1f, 0.5f));
-        btnExportar.setForeground(Color.WHITE);
-        btnExportar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exportarParaXLS();
-            }
-        });
-
-        // Painel para os botões
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        panel.add(btnVoltar);
-        panel.add(btnExportar);
-
-        // Adiciona o painel com os botões à tela
-        add(panel, BorderLayout.SOUTH);
+    private JButton criarBotao(String texto, ActionListener acao) {
+        JButton botao = new JButton(texto);
+        botao.addActionListener(acao);
+        return botao;
     }
 
     private void exportarParaXLS() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Salvar como");
         fileChooser.setSelectedFile(new File("relatorio.xls"));
-        int userSelection = fileChooser.showSaveDialog(this);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            try (FileWriter writer = new FileWriter(fileToSave)) {
-                // Cria a linha do cabeçalho
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try (FileWriter writer = new FileWriter(fileChooser.getSelectedFile())) {
                 for (int i = 0; i < model.getColumnCount(); i++) {
                     writer.write(model.getColumnName(i) + "\t");
                 }
                 writer.write("\n");
 
-                // Popula a planilha com dados
                 for (int i = 0; i < model.getRowCount(); i++) {
                     for (int j = 0; j < model.getColumnCount(); j++) {
                         Object value = model.getValueAt(i, j);
-                        if (value != null) {
-                            writer.write(value.toString());
-                        }
-                        writer.write("\t");
+                        writer.write((value != null ? value.toString() : "") + "\t");
                     }
                     writer.write("\n");
                 }
+
                 writer.flush();
                 JOptionPane.showMessageDialog(this, "Relatório foi salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {

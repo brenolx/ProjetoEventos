@@ -10,7 +10,6 @@ public class Inscricao {
 	private Participante participante;
 	private LocalDateTime dataInscricao;
 	private StatusInscricao statusInscricao;
-	private boolean presencaConfirmada;
 
 	// Getters e Setters
 	public int getId() {
@@ -53,18 +52,9 @@ public class Inscricao {
 		this.statusInscricao = statusInscricao;
 	}
 
-	public boolean isPresencaConfirmada() {
-		return presencaConfirmada;
-	}
-
-	public void setPresencaConfirmada(boolean presencaConfirmada) {
-		this.presencaConfirmada = presencaConfirmada;
-	}
-
 	@Override
 	public String toString() {
 		return "Inscricao [id=" + id + ", evento=" + evento + ", participante=" + participante + ", dataInscricao="
-				+ dataInscricao + ", statusInscricao=" + statusInscricao + ", presencaConfirmada=" + presencaConfirmada
-				+ "]";
+				+ dataInscricao + ", statusInscricao=" + statusInscricao + "]";
 	}
 }

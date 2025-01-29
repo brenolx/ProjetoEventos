@@ -2,17 +2,16 @@ package userinterfaces;
 
 import javax.swing.*;
 import java.awt.*;
-import entities.Mensagem;
-import services.ServidorService;
+import entities.Usuario;
+import dao.BancoDados;
+import dao.UsuarioDAO;
 
 public class TelaLogin extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JPasswordField passwordField;
-    private ServidorService servidorService;
 
     public TelaLogin() {
-        servidorService = new ServidorService();
         configurarJanela();
         adicionarComponentes();
     }
@@ -95,31 +94,37 @@ public class TelaLogin extends JFrame {
     private void abrirTelaCadastroParticipante() {
         TelaCadastroParticipante telaCadastro = new TelaCadastroParticipante();
         telaCadastro.setVisible(true);
-       	dispose(); // Fecha a tela de login
+        dispose(); // Fecha a tela de login
     }
     
     private void abrirTelaCadastroAdmin() {
-        TelaCadastroAdmin telaCadastroAdimin = new TelaCadastroAdmin();
-        telaCadastroAdimin.setVisible(true);
+        TelaCadastroAdmin telaCadastroAdmin = new TelaCadastroAdmin();
+        telaCadastroAdmin.setVisible(true);
         dispose(); // Fecha a tela de login
     }
 
-
     private void executarLogin() {
-        Mensagem mensagem = new Mensagem();
-        mensagem.setOperacao("login");
-        mensagem.setEmail(textField.getText());
-        mensagem.setSenha(new String(passwordField.getPassword()));
-        enviarMensagem(mensagem);
-        dispose();
-    }
+        String email = textField.getText();
+        String senha = new String(passwordField.getPassword());
 
-    private void enviarMensagem(Mensagem mensagem) {
-        servidorService.enviarMensagem(mensagem);
-    }
+        try {
+            UsuarioDAO usuarioDAO = new UsuarioDAO(BancoDados.conectar());
+            Usuario usuario = usuarioDAO.getUsuarioPorEmail(email);
 
-    public void exibirMensagem(String mensagem) {
-        JOptionPane.showMessageDialog(this, mensagem);
+            if (usuario != null && usuario.getSenha().equals(senha)) {
+                // Login bem-sucedido
+                if (usuario.getTipoUsuario() == enuns.TipoUsuario.ADMINISTRADOR) {
+                    new TelaPrincipalAdmin((entities.Administrador) usuario).setVisible(true);
+                } else {
+                    new TelaPrincipalParticipante((entities.Participante) usuario).setVisible(true);
+                }
+                dispose(); // Fecha a tela de login
+            } else {
+                JOptionPane.showMessageDialog(this, "Email ou senha incorretos.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao realizar login: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {

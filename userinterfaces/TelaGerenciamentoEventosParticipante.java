@@ -90,7 +90,9 @@ public class TelaGerenciamentoEventosParticipante extends JFrame {
         // Tabela de eventos
         String[] colunas = {"ID", "Título", "Categoria", "Status"};
         model = new DefaultTableModel(colunas, 0) {
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public boolean isCellEditable(int row, int column) {
                 return false; // Torna todas as células não editáveis
             }
