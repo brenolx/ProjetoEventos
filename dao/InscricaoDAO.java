@@ -11,6 +11,7 @@ import entities.Evento;
 import entities.Inscricao;
 import entities.Participante;
 import entities.Usuario;
+import enuns.StatusEvento;
 import enuns.StatusInscricao;
 
 public class InscricaoDAO {
@@ -174,6 +175,38 @@ public class InscricaoDAO {
         return inscricoes;
     }
 
+    public List<Inscricao> listarInscricoesEncerradas() throws SQLException {
+        List<Inscricao> inscricoes = new ArrayList<>();
+        String query = "SELECT * FROM inscricoes i INNER JOIN eventos e ON i.evento_id = e.id WHERE e.status = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, StatusEvento.ENCERRADO.name());
+            ResultSet rs = stmt.executeQuery();
+
+            EventoDAO eventoDAO = new EventoDAO(conn);
+            UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
+
+            while (rs.next()) {
+                Inscricao inscricao = new Inscricao();
+                inscricao.setId(rs.getInt("i.id"));
+                inscricao.setStatusInscricao(StatusInscricao.valueOf(rs.getString("i.status_inscricao")));
+
+                Evento evento = eventoDAO.buscarEventoPorId(rs.getInt("i.evento_id"));
+                inscricao.setEvento(evento);
+
+                Participante participante = (Participante) usuarioDAO.getUsuarioPorId(rs.getInt("i.participante_id"));
+                inscricao.setParticipante(participante);
+
+                inscricoes.add(inscricao);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao listar inscrições encerradas: " + e.getMessage(), e);
+        }
+
+        return inscricoes;
+    }
+
+    
     public Inscricao buscarInscricaoPorId(int id) throws SQLException {
         String query = "SELECT * FROM inscricoes WHERE id = ?";
         Inscricao inscricao = null;
