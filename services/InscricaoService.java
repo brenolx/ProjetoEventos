@@ -137,27 +137,44 @@ public class InscricaoService {
 
 	// Método para cancelar uma inscrição
 	public boolean cancelarInscricao(int inscricaoId) throws IOException {
-		Connection conn = null;
-		try {
-			// Conectar ao banco de dados
-			conn = BancoDados.conectar();
-			InscricaoDAO inscricaoDAO = new InscricaoDAO(conn);
-			return inscricaoDAO.cancelarInscricao(inscricaoId); // Chama o método do DAO para cancelar a inscrição
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Erro ao cancelar a inscrição: " + e.getMessage(), "Erro",
-					JOptionPane.ERROR_MESSAGE);
-			return false; // Retorna false em caso de erro
-		} finally {
-			// Desconectar do banco de dados
-			try {
-				if (conn != null) {
-					BancoDados.desconectar();
-				}
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null, "Erro ao desconectar do banco de dados: " + e.getMessage(), "Erro",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
+	    Connection conn = null;
+	    try {
+	        // Conectar ao banco de dados
+	        conn = BancoDados.conectar();
+	        InscricaoDAO inscricaoDAO = new InscricaoDAO(conn);
+	        
+	        // Verificar a inscrição antes de cancelar
+	        Inscricao inscricao = inscricaoDAO.buscarInscricaoPorId(inscricaoId);
+	        if (inscricao == null || inscricao.getEvento() == null) {
+	            JOptionPane.showMessageDialog(null, "Inscrição ou evento associado não encontrado.", "Erro",
+	                    JOptionPane.ERROR_MESSAGE);
+	            return false; // Retorna false se a inscrição ou evento não existir
+	        }
+
+	        // Verificar o status do evento
+	        if (!inscricao.getEvento().getStatus().equals(StatusEvento.ABERTO)) {
+	            JOptionPane.showMessageDialog(null, "Não é possível cancelar a inscrição, o evento não está aberto.", "Erro",
+	                    JOptionPane.ERROR_MESSAGE);
+	            return false; // Retorna false se o evento não estiver aberto
+	        }
+
+	        // Chama o método do DAO para cancelar a inscrição
+	        return inscricaoDAO.cancelarInscricao(inscricaoId);
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(null, "Erro ao cancelar a inscrição: " + e.getMessage(), "Erro",
+	                JOptionPane.ERROR_MESSAGE);
+	        return false; // Retorna false em caso de erro
+	    } finally {
+	        // Desconectar do banco de dados
+	        try {
+	            if (conn != null) {
+	                BancoDados.desconectar();
+	            }
+	        } catch (SQLException e) {
+	            JOptionPane.showMessageDialog(null, "Erro ao desconectar do banco de dados: " + e.getMessage(), "Erro",
+	                    JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
 	}
 
 	// Método para confirmar presença

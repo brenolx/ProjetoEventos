@@ -193,4 +193,30 @@ public class EventoDAO {
             throw new SQLException("Erro ao modificar status do evento: " + e.getMessage(), e);
         }
     }
+
+    public List<Evento> listarEventosPopulares() throws SQLException {
+        List<Evento> eventosPopulares = new ArrayList<>();
+        String query = "SELECT e.* " +
+                       "FROM eventos e " +
+                       "JOIN (SELECT evento_id, COUNT(*) AS total_inscricoes " +
+                       "      FROM inscricoes " +
+                       "      WHERE participante_id IN (SELECT id FROM usuarios WHERE tipo_usuario = 'PARTICIPANTE') " +
+                       "      GROUP BY evento_id " +
+                       "      ORDER BY total_inscricoes DESC) AS subquery " +
+                       "ON e.id = subquery.evento_id " +
+                       "ORDER BY total_inscricoes DESC"; // Adicionando a ordenação aqui
+
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Evento evento = mapResultSetToEvento(rs); // Método que mapeia o ResultSet para um objeto Evento
+                eventosPopulares.add(evento);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao listar eventos populares: " + e.getMessage(), e);
+        }
+
+        return eventosPopulares;
+    }
 }

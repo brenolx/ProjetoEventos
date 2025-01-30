@@ -33,6 +33,7 @@ import entities.Inscricao;
 import enuns.StatusEvento;
 
 public class TelaRelatorioParticipacaoEventos extends JFrame {
+	
     private static final long serialVersionUID = 1L;
     private JTable table;
     private DefaultTableModel model;

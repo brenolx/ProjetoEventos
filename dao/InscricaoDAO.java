@@ -174,7 +174,7 @@ public class InscricaoDAO {
 
         return inscricoes;
     }
-
+    
     public List<Inscricao> listarInscricoesEncerradas() throws SQLException {
         List<Inscricao> inscricoes = new ArrayList<>();
         String query = "SELECT * FROM inscricoes i INNER JOIN eventos e ON i.evento_id = e.id WHERE e.status = ?";
@@ -206,7 +206,8 @@ public class InscricaoDAO {
         return inscricoes;
     }
 
-    
+
+
     public Inscricao buscarInscricaoPorId(int id) throws SQLException {
         String query = "SELECT * FROM inscricoes WHERE id = ?";
         Inscricao inscricao = null;

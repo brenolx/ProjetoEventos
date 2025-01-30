@@ -183,7 +183,6 @@ public class TelaDetalhesUsuario extends JFrame {
                 } else {
                     throw new IllegalArgumentException("Data de contratação não pode estar vazia.");
                 }
-                System.out.println(admin);
                 usuarioService.atualizarUsuario(admin);
             } else {
                 Participante participante = new Participante();

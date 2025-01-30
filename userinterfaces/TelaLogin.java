@@ -2,16 +2,16 @@ package userinterfaces;
 
 import javax.swing.*;
 import java.awt.*;
-import entities.Usuario;
-import dao.BancoDados;
-import dao.UsuarioDAO;
+import services.LoginService;
 
 public class TelaLogin extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JPasswordField passwordField;
+    private LoginService loginService; // Adiciona LoginService
 
     public TelaLogin() {
+        loginService = new LoginService(); // Inicializa o LoginService
         configurarJanela();
         adicionarComponentes();
     }
@@ -108,17 +108,9 @@ public class TelaLogin extends JFrame {
         String senha = new String(passwordField.getPassword());
 
         try {
-            UsuarioDAO usuarioDAO = new UsuarioDAO(BancoDados.conectar());
-            Usuario usuario = usuarioDAO.getUsuarioPorEmail(email);
-
-            if (usuario != null && usuario.getSenha().equals(senha)) {
-                // Login bem-sucedido
-                if (usuario.getTipoUsuario() == enuns.TipoUsuario.ADMINISTRADOR) {
-                    new TelaPrincipalAdmin((entities.Administrador) usuario).setVisible(true);
-                } else {
-                    new TelaPrincipalParticipante((entities.Participante) usuario).setVisible(true);
-                }
-                dispose(); // Fecha a tela de login
+            // Usar o LoginService para realizar o login
+            if (loginService.logarUsuario(email, senha)) {
+                dispose(); // Fecha a tela de login se o login for bem-sucedido
             } else {
                 JOptionPane.showMessageDialog(this, "Email ou senha incorretos.", "Erro", JOptionPane.ERROR_MESSAGE);
             }

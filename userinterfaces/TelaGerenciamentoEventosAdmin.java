@@ -213,7 +213,6 @@ public class TelaGerenciamentoEventosAdmin extends JFrame {
 
 	    if (eventos != null) {
 	        for (Evento evento : eventos) {
-	            System.out.println(evento);
 	            model.addRow(new Object[] { evento.getId(), evento.getTitulo(), evento.getCategoria().name(), evento.getStatus().name() });
 	        }
 	    }

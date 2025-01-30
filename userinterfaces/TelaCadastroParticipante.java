@@ -113,6 +113,8 @@ public class TelaCadastroParticipante extends JFrame {
 			}
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Participante cadastrado com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
+                new TelaLogin().setVisible(true);
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao cadastrar participante.", "Erro", JOptionPane.ERROR_MESSAGE);
             }

@@ -3,10 +3,10 @@ package userinterfaces;
 import javax.swing.*;
 import entities.Administrador;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -41,8 +41,8 @@ public class TelaPrincipalAdmin extends JFrame {
         JButton btnEventos = new JButton("Eventos");
         JButton btnRelatorios = new JButton("Relatórios");
         JButton btnSair = new JButton("Sair");
-
-        // Ação do botão "Usuarios"
+        
+     // Ação do botão "Usuarios"
         btnUsuarios.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -51,8 +51,8 @@ public class TelaPrincipalAdmin extends JFrame {
                     TelaGerenciamentoUsuarios telaGerenciamentoUsuario = new TelaGerenciamentoUsuarios(TelaPrincipalAdmin.this);
                     telaGerenciamentoUsuario.setVisible(true);
                 } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+					e1.printStackTrace();
+				}
             }
         });
 
@@ -69,16 +69,16 @@ public class TelaPrincipalAdmin extends JFrame {
                 }
             }
         });
-
-        // Ação do botão "Sair"
+        
+     // Ação do botão "Sair"
         btnSair.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                TelaLogin telaLogin = new TelaLogin();
-                telaLogin.setVisible(true);
+                new TelaLogin().setVisible(true);
             }
         });
+
 
         // Popup Menu para Relatórios
         JPopupMenu popupMenu = criarMenuPopupRelatorios();
@@ -121,7 +121,7 @@ public class TelaPrincipalAdmin extends JFrame {
         JMenuItem itemEventosPopulares = new JMenuItem("Eventos Mais Populares");
         JMenuItem itemEventosNaoOcorridos = new JMenuItem("Eventos Não Ocorridos");
         JMenuItem itemRelatorioDetalhado = new JMenuItem("Relatório Detalhado");
-
+        
         // Ação do item "Relatório de Participantes"
         itemRelatorioParticipantes.addActionListener(new ActionListener() {
             @Override
@@ -130,6 +130,15 @@ public class TelaPrincipalAdmin extends JFrame {
                 telaRelatorioParticipantesEventosPassadosAdmin.setVisible(true);
             }
         });
+        
+     // Adiciona o listener para o item de relatório de participantes
+        itemEventosPopulares.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	new TelaRelatorioEventosPopulares().setVisible(true);
+            }
+        });
+        
 
         popupMenu.add(itemRelatorioParticipantes);
         popupMenu.add(itemEventosPopulares);

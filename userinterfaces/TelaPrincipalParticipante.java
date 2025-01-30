@@ -104,6 +104,14 @@ public class TelaPrincipalParticipante extends JFrame {
 				}
 			}
 		});
+		
+		btnSair.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new TelaLogin().setVisible(true);
+				dispose();
+			}
+		});
 
 		// Adicionar o listener ao item de menu
 		itemEventosInscritos.addActionListener(new ActionListener() {
