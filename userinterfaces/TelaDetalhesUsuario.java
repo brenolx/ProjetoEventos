@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -16,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 import entities.Administrador;
 import entities.Participante;
 import entities.Usuario;
@@ -114,13 +117,17 @@ public class TelaDetalhesUsuario extends JFrame {
                     Administrador admin = (Administrador) usuario;
                     cargoField.setText(admin.getCargo());
                     if (admin.getDataContratacao() != null) {
-                        dataContratacaoField.setText(admin.getDataContratacao().toString());
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        dataContratacaoField.setText(admin.getDataContratacao().format(formatter)); // Formata a data
                     }
                     dataNascimentoField.setEnabled(false);
                     cpfField.setEnabled(false);
                 } else if (usuario instanceof Participante) {
                     Participante participante = (Participante) usuario;
-                    dataNascimentoField.setText(participante.getDataNascimento().toString());
+                    if (participante.getDataNascimento() != null) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        dataNascimentoField.setText(participante.getDataNascimento().format(formatter)); // Formata a data
+                    }
                     cpfField.setText(participante.getCpf());
                     cargoField.setEnabled(false);
                     dataContratacaoField.setEnabled(false);

@@ -2,6 +2,8 @@ package userinterfaces;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -66,12 +68,32 @@ public class TelaCadastroParticipante extends JFrame {
 
         // Data de Nascimento
         JLabel lblDataNascimento = new JLabel("Data de Nascimento (dd/MM/yyyy):", SwingConstants.CENTER);
-        dataNascimentoField = new JTextField();
+        dataNascimentoField = new JTextField("dd/MM/yyyy");
+        dataNascimentoField.setForeground(Color.GRAY); // Define a cor do texto padrão
         gbc.gridx = 0;
         gbc.gridy++;
         add(lblDataNascimento, gbc);
         gbc.gridx = 1;
         add(dataNascimentoField, gbc);
+
+        // Adiciona o FocusListener
+        dataNascimentoField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (dataNascimentoField.getText().equals("dd/MM/yyyy")) {
+                    dataNascimentoField.setText("");
+                    dataNascimentoField.setForeground(Color.BLACK); // Muda a cor do texto para preto
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (dataNascimentoField.getText().isEmpty()) {
+                    dataNascimentoField.setText("dd/MM/yyyy");
+                    dataNascimentoField.setForeground(Color.GRAY); // Restaura a cor do texto padrão
+                }
+            }
+        });
 
         // CPF
         JLabel lblCPF = new JLabel("CPF:", SwingConstants.CENTER);
@@ -106,11 +128,11 @@ public class TelaCadastroParticipante extends JFrame {
 
         if (validarDados(nome, email, senha, dataNascimento, cpf)) {
             boolean sucesso = false;
-			try {
-				sucesso = cadastroParticipanteService.cadastrarParticipante(nome, email, senha, dataNascimento, cpf);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+            try {
+                sucesso = cadastroParticipanteService.cadastrarParticipante(nome, email, senha, dataNascimento, cpf);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Participante cadastrado com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
                 new TelaLogin().setVisible(true);
