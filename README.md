@@ -1,8 +1,8 @@
 # ProjetoEventos
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- Criando o banco de dados e selecionando-o
+CREATE DATABASE IF NOT EXISTS `gerenciadoreventos`;
+USE `gerenciadoreventos`;
 
 -- Criando a tabela de eventos
 CREATE TABLE `eventos` (
